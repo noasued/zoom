@@ -11,7 +11,7 @@
 <ul>
   <li>🧑🏻‍💻NOA🌊 : <a href="https://github.com/noasued">깃허브</a></li>
   <li>👩🏻‍💻Lena🌻 : <a href="https://github.com/sbyun1">깃허브</a></li>
-  <li>👨🏻‍💻Daewon🐿 : <a href="https://github.com/abyss0246">깃허브</a></li>
+  <li>👨🏻‍💻David🐿 : <a href="https://github.com/abyss0246">깃허브</a></li>
   <li>👩🏻‍💻JeongHwa : <a href="https://github.com/GongJeongHwa">깃허브</a></li>
   <li>👩🏻‍💻Jiyoung : <a href="https://github.com/jiyoungbb">깃허브</a></li>
   <li>👩🏻‍💻Yeji : <a href="https://github.com/YEJIXD">깃허브</a></li>
