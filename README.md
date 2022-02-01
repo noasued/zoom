@@ -11,7 +11,7 @@
 <ul>
   <li>🧑🏻‍💻NOA🌊 : <a href="https://github.com/noasued">깃허브</a></li>
   <li>👩🏻‍💻Lena🌻 : <a href="https://github.com/sbyun1">깃허브</a></li>
-  <li>👨🏻‍💻Daewon🐿 : <a href="https://github.com/abyss0246">깃허브</a></li>
+  <li>👨🏻‍💻David🐿 : <a href="https://github.com/abyss0246">깃허브</a></li>
   <li>👩🏻‍💻JeongHwa : <a href="https://github.com/GongJeongHwa">깃허브</a></li>
   <li>👩🏻‍💻Jiyoung : <a href="https://github.com/jiyoungbb">깃허브</a></li>
   <li>👩🏻‍💻Yeji : <a href="https://github.com/YEJIXD">깃허브</a></li>
@@ -27,7 +27,7 @@
 </ul>
 <h1 align="center">스터디 방향</h1>
 <ul>
-  <li>NomadCoders Vanilla JavaScript 무료강의로 시작(2022.01.21 - 2021.01.28 완강 목표) [완료]</li>
+  <li>NomadCoders Vanilla JavaScript 무료강의로 시작(2022.01.21 - 2021.01.28 완강 목표) ✅ [완료]</li>
   <li>NomadCoders Zum Clone Coding 무료강의 (2022.02.02 - 2022.02.13)</li>
 </ul>
 
