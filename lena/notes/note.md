@@ -11,7 +11,7 @@
 - protocol, where all the servers work
     * `http://~~`
 * **DOES NOT HAPPEN REAL-TIME**
-    server has to get request _first_ in order to respond//
+    server has to get request _first_ in order to respond
 * **stateless**: BE does not remember users 
     * no connection between the user & BE
      * After respond, BE forgets about the user(browser) and just wait for the next request. : reason why we use **cookie** or **session**
