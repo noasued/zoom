@@ -16,9 +16,9 @@
     * no connection between the user & BE
      * After respond, BE forgets about the user(browser) and just wait for the next request. : reason why we use **cookie** or **session**
 
-###Websocket :
-*  another type of protocal that **allows real-time communication**
-* `ws://~~~`
+### Websocket :
+*  another type of protocol that **allows real-time communication**
+    * `ws://~~~`
 * browser sends request -> server either accepts or deny that request.
 * once it accepts, ***connection*** is established: 
     * server & user(browser) can communicate directly without request/response at any point. (bi-directional)
