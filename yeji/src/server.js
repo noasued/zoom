@@ -1,37 +1,46 @@
+// http import
+import http from "http";
+// ws import
+import WebSocket from "ws";
 import express from "express";
 
-// express로 할 일 : views를 설정해주고, render 해주기 + 나머지는 Websocket에서 실시간으로 일어날 것
 const app = express();
 
-// 1. 나중에 pug 페이지들을 render하기 위해 pug 설정을 해줘야 함
 app.set("view engine", "pug");
 app.set("views",__dirname + "/views");
-
-// 3. user가 /public으로 가게되면 __dirname +"/public" 폴더를 보여주게 할 것
 app.use("/public", express.static(__dirname + "/public"));
-
-// 2. 사용할 유일한 route 만들기
 app.get("/",(req,res) => res.render("home"));
-
-// catchall url 만들기
-// app.get 입력 후, 여기서 user가 어떤 url로 이동하던지 홈으로 돌려보내면 됨 ∴다른 url을 사용하지 않을 것이기 때문에(홈만 사용할 것)
 app.get("/*", (req,res) => res.redirect("/"));
 
 const handleListen = () => console.log(`Listening on http://localhost:3000`);
-app.listen(3000, handleListen);
 
-// Recap
-/*
-    1. 개발 환경 설정 (express를 사용한 일반적인 NodeJS 설정 - package.json, script 생성, babel ..)
-        - babel-node를 실행 > babel-node는 바로 babel.config.json을 찾음 > 거기서 코드에 적용돼야하는 preset을 실행시킬 것
-        - Nodemon을 설정하기 위해 nodemon.json 생성
-            * Nodemon : 나의 프로젝트를 살펴보고 변경사항이 있을 시, 서버를 재시작해주는 프로그램 
-                        서버를 재시작하는 대신에 babel-node를 실행하게 되는데 babel은 내가 작성한 코드를 일반 NodeJS코드로 compile해주는 데 그 작업을 src/server.js에서 해준다 (* nodemon.json 파일 참고)
-            * server.js : express를 import > express 애플리케이션을 구성 > view engne을 pug로 설정 > views 디렉토리 설정 > public 파일들에 대해서도 똑같은 작업을 해준다 (public 파일들은 FrontEnd에서 구동되는 코드, 아주 중요한 부분)
-                          server.js는 BackEnd에서 구동 (app.js : FrontEnd에서 구동)
-                    app.user("/public"~~) 코드 : public 폴더를 user에게 공개해주는 것 (user는 쉽게 서버 내 모든 폴더를 들여다 볼 수 X => user가 볼 수 있는 폴더를 따로 지정해줘야 함 [현재는 user는 /public으로 이동할 시, public 폴더 내용을 볼 수 O])
-                    app.get("/",~~) 코드 : 홈페이지로 이동 시, 사용될 template을 render해주는 것
-        - views 폴더에 있는 home.pug를 render하면 끝
+// 모든 node.js에 내장되어있는 http package를 사용해보자 (우선 http를 import해오기)
+// create "http" server -> requestListener 경로가 있어야 함 (express application으로부터 서버를 만들어보기)
+// webSocket을 하려면 꼭 필요한 부분
+const server = http.createServer(app);  // express.js를 이용해 http server 만들기
+// app.listen을 하기 전, 아직 server에 access하지 못했었는데, 이젠 접근 가능
+// 이 server를 통해 webSocket을 만들 수 있다
+// http 서버를 원하지 않는 경우, 필수적인 것은 아님 -> 이런 경우에는 webSocket 서버만 만들면 된다.
 
-        - 만약 catchall url을 만들고 싶다면, app.get("/*",~~ )코드 작성하기
+// 새로운 "webSocket" server 만들기 (위에 만든 server를 전달(pass)해주기 => 이렇게하면 http서버, webSocket서버 둘 다 돌릴 수 있게 됨)
+const wss = new WebSocket.Server({ server });
+
+/* http 서버와 webSocket 서버 둘 다 만든 이유 
+    : 2개의 서버가 같은 port에 있길 원하기 때문에 현재는 이 두개를 동시에 함께 만듦
+      서버를 만들고 (보이도록 노출시키고), http 서버 위에 ws 서버를 만들기 위함
+      그러므로 localhost는 동일한 port에서 http, ws request 두 개를 모두 처리할 수 있다.
+*/
+/* 이제 해야할 일 : server.listen하기 (port는 아무거나) -> 이제 handleListener를 사용할 수 O
+    app.listen처럼 크게 달라져보이는 것은 없지만, 변화의 요점은 "내 http 서버에 access하려는 것"이다.
+    그래서 http 서버 위에 webSocket 서버를 만들 수 있도록 한 것
+*/
+
+/* day3_Recap 
+    서버는 http, ws 2개의 protocol을 이해할 수 있게 되었다.
+    http 서버가 있으면, 그 위에서 ws 서버를 만들 수 있고, 2개의 protocol 다 같은 port를 공유하는 것
+    서버는 http protocol과 ws connection(연결)을 지원한다.
+
+    http 서버가 필요한 이유 : views, static files, home, redirection을 원하기 때문
+
+    이제 ws연결로 브라우저와 메세지를 주고 받기를 해보자
 */
