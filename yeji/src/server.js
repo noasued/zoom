@@ -2,6 +2,9 @@ import http from "http";
 import WebSocket from "ws";
 import express from "express";
 
+// connection 만들기
+// ws를 사용해 backend와 frontend 사이에 connection만들기
+// websocket : browser와 server 사이의 연결
 const app = express();
 
 app.set("view engine", "pug");
@@ -15,16 +18,24 @@ const handleListen = () => console.log(`Listening on http://localhost:3000`);
 const server = http.createServer(app); 
 const wss = new WebSocket.Server({ server });
 
-function handleConnection(socket){ 
-    console.log(socket); 
+// 브라우저에서 event란 : click, submit, Wi-Fi on/off 등
+// wss.on : event와 function을 받음, 이 function은 이게 발생할 때 호출되는 것
+
+/* on method : event가 발동하는 것 기다림 (지금의 경우는 event가 "connection") + backend에 연결된 사람의 정보를 제공(socket에서 오는 정보)
+              => server와 browser 사이의 연결
+   function : connection(event)이 이뤄지면 작동
+*/
+// socket : 연결된 어떤 사람, 즉 연결된 브라우저와의 contract(연락) 라인 -> socket을 이용하면 메세지 주고 받기를 할 수 O
+//          -> 이것을 저장해야한다. (최소한 console.log라도 하기)
+function handleConnection(socket){  // 여기의 socket이 frontend와 real-time으로 소통할 수 있다.
+    console.log(socket); // 여기서 access할 수 있다.
 }
 
-// connection 안에 위와 같은 역할을 하는 익명 함수 만들어주기 => 그러면 socket이 현재 어떤 상태인지 알기 쉽다 : connection이 생기면 socket을 받는다는 것을 알 수 있기 때문에
-// (event를 다룰 때도 이렇게 하는게 좋다)
-// socket에 있는 method 사용하기
-wss.on("connection", (socket) =>{
-//    console.log(socket); 
-    socket.send("hello!!!");        // socket으로 data보내기
-});
+wss.on("connection", handleConnection);
 
 server.listen(3000, handleListen);
+
+/* day4_Recap
+    server.js의 socket은 연결된 브라우저를 뜻함
+    app.js의 socket은 서버로의 연결을 뜻함
+*/
