@@ -23,3 +23,8 @@
 * once it accepts, ***connection*** is established: 
     * server & user(browser) can communicate directly without request/response at any point. (bi-directional)
 * connection can be between two BE servers
+
+### WS: 
+* websocket implementation for Node.js (library)
+* it has the most basic, core feature of websocket
+* install by using "npm i ws"
