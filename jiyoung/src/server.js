@@ -18,4 +18,11 @@ const server = http.createServer(app);
 //ws server
 const wss = new WebSocket.Server({ server });
 
+//프론트로 메세지 보내고 받고 할 수 있음
+//브라우저로의 연결
+function handleConnection(socket){
+    console.log(socket);
+}
+wss.on("connection", handleConnection);
+
 server.listen(3000, handleListen);
