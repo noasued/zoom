@@ -55,3 +55,12 @@ creating wss only is absolutely fine
     -> need http server for: views, static files, home, redirection
 */
 
+function handleConnection(socket){
+    console.log(socket);
+}
+//EventListener가  event정보를 가지고 있듯이 socket에 대한 정보를 가지고 있음
+wss.on("connection",handleConnection)//somebody connected to us => socket
+
+
+//on the server side, socket = browser that just connected
+//on the view, socket = connection btw FE & BE
