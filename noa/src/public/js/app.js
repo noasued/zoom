@@ -57,6 +57,16 @@ function handleSubmit(event) {
   event.preventDefault();
   const input = messageForm.querySelector("input");
   socket.send(makeMessage("new_message", input.value)); //backend로 msg value 보내기
+
+  //message 받을 때마다 li 생성
+  const li = document.createElement("li");
+
+  //message.data를 li 안에 넣자
+  li.innerText = `You: ${input.value}`;
+
+  //li를 messageList안에 넣기
+  messageList.append(li);
+
   // console.log(input.value);
   input.value = "";
 }
@@ -66,6 +76,7 @@ function handleNickSubmit(event) {
   event.preventDefault();
   const input = nickForm.querySelector("input");
   socket.send(makeMessage("nickname", input.value)); //backend로 nickname value 보내기
+  input.value = "";
 }
 
 messageForm.addEventListener("submit", handleSubmit);

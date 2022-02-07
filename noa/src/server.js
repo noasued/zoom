@@ -42,11 +42,20 @@ const sockets = [];
 
 wss.on("connection", (socket) => {
   sockets.push(socket); //브라우저가 달라도 받은 메세지를 socket에 있는 모든 곳에 전달 가능
-
+  socket["nickname"] = "Anonymous";
   console.log("Connected to Browser ✅"); // 1. connection이 생겼을 때 socket으로 메세지 보내기(hello)
   socket.on("close", onSocketClose); //browser가 꺼졌을 때를 위한 listener
-  socket.on("message", (message) => {
-    sockets.forEach((aSocket) => aSocket.send(message.toString("utf8")));//sending back to the user
+  socket.on("message", (msg) => {
+    const message = JSON.parse(msg);
+    //JSON.parse() : string을 javascript obj로 바꿔줌
+
+    switch (message.type) {
+      case "new_message":
+        sockets.forEach((aSocket) =>
+          aSocket.send(`${socket.nickname}: ${message.payload}`));//sending back to the user
+      case "nickname":
+        socket["nickname"] = message.payload;
+    }
   });
   // socket.send("hello!!"); // browser에 메세지 보냄
 });
