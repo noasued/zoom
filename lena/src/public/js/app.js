@@ -1,3 +1,7 @@
+//getting elements 
+const messageList = document.querySelector("ul");
+const messageForm = document.querySelector("form");
+
 //btn.addEventListener("click", fn) : similar to WS
 //WS also has similar function as eventlistner  
 
@@ -19,8 +23,15 @@ socket.addEventListener("close", () => {
     console.log("Disconnected from Server ❌");
 });
 
-setTimeout(() => {
-    socket.send("hello from the browser!");
-}, 10000); //set showing time delay when sending msg to the BE
+// setTimeout(() => {
+//     socket.send("hello from the browser!");
+// }, 10000); //set showing time delay when sending msg to the BE
 
 
+function handleSubmit(event){
+    event.preventDefault();
+    const input = messageForm.querySelector("input");
+    socket.send(input.value); //sending msg from FE from to BE
+    input.value = "";
+}
+messageForm.addEventListener("submit", handleSubmit);
