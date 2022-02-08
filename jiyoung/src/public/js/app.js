@@ -1,3 +1,6 @@
+const messageList = document.querySelector("ul");
+const messageForm = document.querySelector("form");
+
 //백엔드 프론트엔드 연결
 //프론트에서 백으로 메세지 보낼 수 있음
 //서버로의 연결
@@ -21,6 +24,17 @@ socket.addEventListener("message", (message) => {
 socket.addEventListener("close", () => {
     console.log("Disonnected from Server ❌");
 });
+
+function handleSubmit(event){
+    event.preventDefault();
+    const input = messageForm.querySelector("input");
+    //프론트의 form에서 백으로 메세지를 보내는 것
+    socket.send(input.value);
+    //메세지 보낸 후 다시 공백으로 저장
+    input.value = "";
+}
+
+messageForm.addEventListener("submit", handleSubmit);
 
 //프론트에서 백으로 메세지 보내는 것
 //timeout -> 바로 실행되지 않음
