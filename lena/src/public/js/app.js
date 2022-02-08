@@ -43,6 +43,11 @@ function handleSubmit(event){
     event.preventDefault();
     const input = messageForm.querySelector("input");
     socket.send(makeMessage("new_message", input.value)); //sending msg from FE from to BE
+
+    const li = document.createElement("li");
+    li.innerText = `You: ${input.value}`;
+    messageList.append(li);
+
     input.value = "";
 }
 
