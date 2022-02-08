@@ -65,9 +65,16 @@ wss.on("connection", (socket) => {
     //inside the socket method
     console.log("Connected to Browser ✅");
     sockets.push(socket); //adding browsers (socket) info
+    socket["nickname"] = "Guest";
     socket.on("close", () => console.log("Disconnected from browser ❌"));
-    socket.on("message", (message) => {
-        sockets.forEach((aSocket) => aSocket.send(message.toString('utf8')));
+    socket.on("message", (msg) => {
+        const message = JSON.parse(msg.toString('utf8'));
+        switch(message.type){
+            case("new_message"):
+                sockets.forEach((aSocket) => aSocket.send(`${socket.nickname}: ${message.payload}`));
+            case("nickname"):
+                socket["nickname"] = message.payload;
+        }
     }); //receiving msg from FE
    // socket.send("Hello!!"); //sending msg -> need to receive msg on the view
 });//somebody connected to us (socket)
