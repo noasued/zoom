@@ -56,17 +56,30 @@ creating wss only is absolutely fine
 */
 
 
+
+//creating connection btw browsers and BE
+const sockets = []; //if browsers is connected, add "socket" info to here
+
 //EventListener가  event정보를 가지고 있듯이 socket에 대한 정보를 가지고 있음
 wss.on("connection", (socket) => {
     //inside the socket method
     console.log("Connected to Browser ✅");
+    sockets.push(socket); //adding browsers (socket) info
+    socket["nickname"] = "Guest";
     socket.on("close", () => console.log("Disconnected from browser ❌"));
-    socket.on("message", message => {
-        console.log(message.toString('utf8'));
+    socket.on("message", (msg) => {
+        const message = JSON.parse(msg.toString('utf8'));
+        switch(message.type){
+            case("new_message"):
+                sockets.forEach((aSocket) => aSocket.send(`${socket.nickname}: ${message.payload}`));
+            case("nickname"):
+                socket["nickname"] = message.payload;
+        }
     }); //receiving msg from FE
-    socket.send("Hello!!"); //sending msg -> need to receive msg on the view
+   // socket.send("Hello!!"); //sending msg -> need to receive msg on the view
 });//somebody connected to us (socket)
 
 
 //on the server side, socket = browser that just connected
 //on the view, socket = connection btw FE & BE
+
