@@ -16,13 +16,29 @@ const handleListen = () => console.log(`Listening on http://localhost:3000`);
 const server = http.createServer(app); 
 const wss = new WebSocket.Server({ server });
 
+
 // function handleConnection(socket){ 
 //     console.log(socket); 
 // }
 
+
 function onSocketClose(){
     console.log("Disconnected from the Browser ❌");
 }
+
+
+const sockets = [];
+
+wss.on("connection", (socket) => {
+    sockets.push(socket);
+    
+    console.log("Connected to Browser ✅");    
+    socket.on("close", onSocketClose);
+
+    // message type을 만들어주기
+    // 하나는 message chat, 다른 하나는 nickname으로 해주기
+    socket.on("message", (message) =>{
+        sockets.forEach(aSocket => aSocket.send(message));
 
 // function onSocketMessage(message){
 //     console.log(message);
@@ -43,10 +59,41 @@ wss.on("connection", (socket) => {
     // socket.on()을 작성하고, message 이벤트를 등록하기
     socket.on("message", (message) => {
         console.log(message);
+
     });
-    
-    // 4. 브라우저에 메세지를 보내도록 작성
-    socket.send("hello!!!!");       // connection이 생겼을 때, socket으로 즉시 메세지를 보낸 것
 });
 
 server.listen(3000, handleListen);
+
+// JSON 보내기
+/* 
+    type이 다른 message 두 개 생성
+
+    - type : message의 type
+    - payload : 내가 사용하고 싶은 nickname 작성
+
+    그래서 이 2가지 type의 message를 구별해줄 수 있어야 한다.
+    하지만 app.js의 31행의 socket.send(input.value); 에서 string data만 보낼 수 있다 => 그래서 JSON으로 만들어주는 것이 좋다 => app.js의 handleNickSubmit 수정
+*/
+{ 
+    type:"message",
+    payload;"hello everyone!"
+}
+{
+    type:"nickname",
+    payload;"yeji"
+}
+
+/* backend에서 JSON을 열어서 message를 확인한 후 무엇을 할 지 결정하기 (String만 전송해야 함)
+    * JS object를 가지고 String을 전송하는 가장 좋은 방법이 무엇일까? (단, JSON으로 사용할 수 있어야 함)
+      + 그리고 그 String을 다시 JS object로 만드는 방법이 무엇일까?
+
+      => console 창에서 JSON.stringfy
+      ∴backend에서 String을 가져다 JSON.parse할 수 있다.
+
+      ->이렇게 String으로 바뀐 object를 가져와서 string으로 바꿔줄 것
+      Backend에서는 그 String을 다시 object로 바꿔준다.
+      == 즉 backend에서 socket으로 message를 전송하고싶으면, object를 가져와서 String으로 만들어줘야 한다.
+      Frontend에서도 동일하게 그 String을 가져와서 새로운 message가 왔을 때, 그 String을 object로 만들어야 한다. => app.js에서 function을 만드는 것부터 시작
+
+*/
