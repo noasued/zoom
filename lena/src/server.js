@@ -75,3 +75,4 @@ wss.on("connection", (socket) => {
 
 //on the server side, socket = browser that just connected
 //on the view, socket = connection btw FE & BE
+
