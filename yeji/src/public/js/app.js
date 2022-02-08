@@ -1,4 +1,5 @@
 const messageList = document.querySelector("ul");
+
 // 4. html에서 작업한 후, id가 nick과 message인 것 추가 작성
 const nickForm = document.querySelector("#nick");
 const messageForm = document.querySelector("#message");
@@ -18,6 +19,10 @@ function makeMessage(type, payload){
 */
 
 function handleOpen(){
+const messageForm = document.querySelector("form");
+const socket = new WebSocket(`ws://${window.location.host}`);
+
+socket.addEventListener("open", () => { 
     console.log("Connected to Server ✅");
 }
 
@@ -32,6 +37,7 @@ socket.addEventListener("message", (message) => {
 
     // 3. li를 messageList 안에 넣어주기
     messageList.append(li);
+    console.log("New message: ", message.data);
 });
 
 socket.addEventListener("close", () => {    
@@ -70,3 +76,24 @@ function handleNickSubmit(event){
 
 messageForm.addEventListener("submit", handleSubmit);
 nickForm.addEventListener("submit", handleNickSubmit);
+// message send하는 부분 우선 지우기
+// setTimeout(() => {
+//     socket.send("hello from the browser!");
+// }, 10000);
+
+// 1. function 생성 > message send하기
+function handleSubmit(event){
+    event.preventDefault();
+    const input = messageForm.querySelector("input");
+    //console.log(input.value);
+    
+    // 2. 전에 사용했던 socket.send() 사용 => frontend의 form에서 backend로 무언가를 보내기
+    socket.send(input.value);
+
+    // 3. input.value 비워주기 (message send 후에 input 박스 비우기)
+    input.value = "";
+}
+
+
+messageForm.addEventListener("submit", handleSubmit);
+

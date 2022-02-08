@@ -9,7 +9,6 @@ html(lang="en")
     body 
         header
             h1 Noom
-        main
             form#nickname 
                 input(type="text", placeholder="choose a nickname", required)
                 button Save
@@ -19,6 +18,9 @@ html(lang="en")
                 input(type="text", placeholder="write a msg", required)
                 // form input button만 작성하면 backend로 nickname을 보내게 된다. 
                 // backend에서는 message를 구분하지 못한다. (∴내가 msg를 보낼 때 모두에게 보내고 있기 때문에) => msg type 만들어주기 (id 만들어주기)
+            ul  <!--ul 만들기(message list)-->
+            form
+                input(type="text", placeholder="write a msg", required)
                 button Send
         button call
         script(src = "/public/js/app.js")
