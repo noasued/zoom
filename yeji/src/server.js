@@ -40,28 +40,13 @@ wss.on("connection", (socket) => {
     //firefox가 연결될 때, firefox를 이 array에 넣어준다는 것 + brave가 연결될 때는 brave를 31행에 있는 array에 넣어줄 것
     sockets.push(socket);
     
-    console.log("Connected to Browser ✅");    
-    socket.on("close", onSocketClose);
-
-    // frontend input에서 보낸 message를 backend로 받았다. 그 message를 다시 frontend로 그대로 보내주기
-    socket.on("message", (message) =>{
-        /* aSocket : 위의 socket.on의 socket과는 다르다.
-                     각 브라우저를 aSocket으로 표시하고 메시지를 보낸다는 의미
-        */
-
-        //console.log(message.toString('utf8'));
-        sockets.forEach(aSocket => aSocket.send(message));
-        //socket.send(message);       // user로부터 message를 받아서 다시 돌려주고 있음
+    // socket.on()을 작성하고, message 이벤트를 등록하기
+    socket.on("message", (message) => {
+        console.log(message);
     });
-    /* chrome에서는 어떠한 메세지도 뜨지 않는다 (∴chrome에게 메시지를 보내지 않았기 때문에 올바르게 작동한 것)
-       firefox가 backend에 메시지를 전달했고, 서버가 firefox에 답장을 해줌
-       한 개의 서버가 서로 다른 두 브라우저로부터 메시지를 받고 있지만, 서로 다른 브라우저는 서로 메세지를 주고받지 못한다.
-       wss.on 안에 있는 코드들은 firefox와 brave에서 모두 작동한다. => firefox가 서버에 메시지를 보내면, 서버는 firefox에게 답장을 해준다 => wss.on안의 코드들은 brave와 connectino될 때와 firefox와 connection될 때에도 작동(총 2번 작동한다.)
-       => brave와 서버 사이에 websocket이 있고, firefox와 서버 사이에도 websocket이 있다.
-       현재는 서버와 브라우저 둘이서만 주고받고 있음 -> 그래서 서버가 firefox로부터 메세지를 받아서 brave에 전달해줄 것 (이러기 위해서는 누가 연결되었는지 알아야 한다.)
-       => fake database를 만들어주고, 누군가 내 서버에 연결하면 그 connection을 여기에 넣는다
-    */
-//    socket.send("hello!!!!");
+    
+    // 4. 브라우저에 메세지를 보내도록 작성
+    socket.send("hello!!!!");       // connection이 생겼을 때, socket으로 즉시 메세지를 보낸 것
 });
 
 server.listen(3000, handleListen);
