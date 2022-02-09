@@ -6,7 +6,7 @@
 > 10: when user sends GET request to homepage, server respond with a template.
 
 > 11: when user sends GET request to any page, server respond with a 'redirect'
-
+___
 ### http:
 - protocol, where all the servers work
     * `http://~~`
@@ -28,3 +28,11 @@
 * websocket implementation for Node.js (library)
 * it has the most basic, core feature of websocket
 * install by using "npm i ws"
+---
+### Socket IO
+* It is a framework:
+    * helps building real-time connection btw FE and BE
+    * uses ***WebSocket*** if the browser supports WebSocket
+    * if not, uses ***HTTP long-polling***
+* **is NOT an implementation of web socket**
+* if there is problem with WS, it will try to reconnect automatically : gives **reliability**
