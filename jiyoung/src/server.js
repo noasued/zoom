@@ -1,6 +1,7 @@
 import http from "http";
 import WebSocket from "ws";
 import express from "express";
+import { type } from "os";
 
 const app = express();
 
@@ -50,8 +51,18 @@ wss.on("connection", (socket) => {
 
     // 4. browser에 메세지를 보내도록 작성
     // connection이 생겼을 때 소켓으로 메세지 보냄
-    socket.send("hello!!!!");
+    //socket.send("hello!!!!");
 });
 
 
 server.listen(3000, handleListen);
+
+{
+    type:"message";
+    payload:"hello everyone";
+}
+
+{
+    type:"nickname";
+    payload:"nico";
+}
