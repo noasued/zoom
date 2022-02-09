@@ -1,8 +1,9 @@
 //setting node set up using Express
 
 import http from "http";
-import WebSocket from "ws";
+//import WebSocket from "ws";
 import express from "express";
+import { Server } from "socket.io";
 
 const app = express();
 
@@ -35,7 +36,12 @@ creating http server:
 */
 
 const handleListen = () => console.log(`Listening on http://localhost:3000`);
-const server = http.createServer(app); // creating server from express application
+const httpServer = http.createServer(app); // creating server from express application
+const wsServer = new Server(httpServer);
+
+wsServer.on("connection", (socket) => {
+    console.log(socket);
+});
 
 //now we are able to create websocket on top of this server
 
@@ -43,8 +49,8 @@ const server = http.createServer(app); // creating server from express applicati
 creating websocket server:
     -> use Websocket :: need to import Websocket
 */
-const wss = new WebSocket.Server({server});
-server.listen(3000,handleListen); //localhost:3000 can handle both http AND ws
+//const wss = new WebSocket.Server({server});
+httpServer.listen(3000,handleListen); //localhost:3000 can handle both http AND ws
 
 /*
 Don't have to pass "server" :: this way, if http server runs, wss also runs
@@ -56,28 +62,29 @@ creating wss only is absolutely fine
 */
 
 
+//1. WebSocket CODES::
 
 //creating connection btw browsers and BE
-const sockets = []; //if browsers is connected, add "socket" info to here
+// const sockets = []; //if browsers is connected, add "socket" info to here
 
-//EventListener가  event정보를 가지고 있듯이 socket에 대한 정보를 가지고 있음
-wss.on("connection", (socket) => {
-    //inside the socket method
-    console.log("Connected to Browser ✅");
-    sockets.push(socket); //adding browsers (socket) info
-    socket["nickname"] = "Guest";
-    socket.on("close", () => console.log("Disconnected from browser ❌"));
-    socket.on("message", (msg) => {//receiving msg from FE
-        const message = JSON.parse(msg.toString('utf8'));
-        switch(message.type){ //어떤 메세지인지 확인 후 다르게 처리
-            case("new_message"):
-                sockets.forEach((aSocket) => aSocket.send(`${socket.nickname}: ${message.payload}`));
-            case("nickname"):
-                socket["nickname"] = message.payload;
-        }
-    }); 
+// //EventListener가  event정보를 가지고 있듯이 socket에 대한 정보를 가지고 있음
+// wss.on("connection", (socket) => {
+//     //inside the socket method
+//     console.log("Connected to Browser ✅");
+//     sockets.push(socket); //adding browsers (socket) info
+//     socket["nickname"] = "Guest";
+//     socket.on("close", () => console.log("Disconnected from browser ❌"));
+//     socket.on("message", (msg) => {//receiving msg from FE
+//         const message = JSON.parse(msg.toString('utf8'));
+//         switch(message.type){ //어떤 메세지인지 확인 후 다르게 처리
+//             case("new_message"):
+//                 sockets.forEach((aSocket) => aSocket.send(`${socket.nickname}: ${message.payload}`));
+//             case("nickname"):
+//                 socket["nickname"] = message.payload;
+//         }
+//     }); 
   
-});//somebody connected to us (socket)
+// });//somebody connected to us (socket)
 
 
 //on the server side, socket = browser that just connected
