@@ -1,62 +1,64 @@
-//getting elements 
-const messageList = document.querySelector("ul");
-const messageForm = document.querySelector("#message");
-const nickForm = document.querySelector("#nickname")
+const socket = io();
 
-//btn.addEventListener("click", fn) : similar to WS
-//WS also has similar function as eventlistner  
+// //getting elements 
+// const messageList = document.querySelector("ul");
+// const messageForm = document.querySelector("#message");
+// const nickForm = document.querySelector("#nickname")
 
-//connecting BE and FE using socket
-const socket = new WebSocket(`ws://${window.location.host}`);
+// //btn.addEventListener("click", fn) : similar to WS
+// //WS also has similar function as eventlistner  
 
-//"ws://localhost:3000" works but localhost only works on your computer ONLY
+// //connecting BE and FE using socket
+// const socket = new WebSocket(`ws://${window.location.host}`);
 
-//receiving msg sent
-socket.addEventListener("open",() => {
-    console.log("Connected to Server✅"); //when the socket has opened a connection
-});
+// //"ws://localhost:3000" works but localhost only works on your computer ONLY
 
-socket.addEventListener("message", (message) => {
-    //console.log("New message: ", message.data);
+// //receiving msg sent
+// socket.addEventListener("open",() => {
+//     console.log("Connected to Server✅"); //when the socket has opened a connection
+// });
 
-    //showing msg on the screen
-    const li = document.createElement("li");
-    li.innerText = message.data;
-    messageList.append(li);
+// socket.addEventListener("message", (message) => {
+//     //console.log("New message: ", message.data);
+
+//     //showing msg on the screen
+//     const li = document.createElement("li");
+//     li.innerText = message.data;
+//     messageList.append(li);
     
-});
+// });
 
-socket.addEventListener("close", () => {
-    console.log("Disconnected from Server ❌");
-});
+// socket.addEventListener("close", () => {
+//     console.log("Disconnected from Server ❌");
+// });
 
-// setTimeout(() => {
-//     socket.send("hello from the browser!");
-// }, 10000); //set showing time delay when sending msg to the BE
+// // setTimeout(() => {
+// //     socket.send("hello from the browser!");
+// // }, 10000); //set showing time delay when sending msg to the BE
 
-function makeMessage(type,payload){ //JSON형식의 메세지를 stringify해줌
-    const msg = {type, payload};
-    return JSON.stringify(msg);
-}
+// function makeMessage(type,payload){ //JSON형식의 메세지를 stringify해줌
+//     const msg = {type, payload};
+//     return JSON.stringify(msg);
+// }
 
-function handleSubmit(event){
-    event.preventDefault();
-    const input = messageForm.querySelector("input");
-    socket.send(makeMessage("new_message", input.value)); //sending msg from FE from to BE
+// function handleSubmit(event){
+//     event.preventDefault();
+//     const input = messageForm.querySelector("input");
+//     socket.send(makeMessage("new_message", input.value)); //sending msg from FE from to BE
 
-    const li = document.createElement("li");
-    li.innerText = `You: ${input.value}`;
-    messageList.append(li);
+//     const li = document.createElement("li");
+//     li.innerText = `You: ${input.value}`;
+//     messageList.append(li);
 
-    input.value = "";
-}
+//     input.value = "";
+// }
 
-function handleNickSubmit(event){
-    event.preventDefault();
-    const input = nickForm.querySelector("input");
-    socket.send(makeMessage("nickname",input.value));
-    input.value = "";
+// function handleNickSubmit(event){
+//     event.preventDefault();
+//     const input = nickForm.querySelector("input");
+//     socket.send(makeMessage("nickname",input.value));
+//     input.value = "";
    
-}
-messageForm.addEventListener("submit", handleSubmit);
-nickForm.addEventListener("submit", handleNickSubmit);
+// }
+// messageForm.addEventListener("submit", handleSubmit);
+// nickForm.addEventListener("submit", handleNickSubmit);
