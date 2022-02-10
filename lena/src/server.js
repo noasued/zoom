@@ -40,7 +40,15 @@ const httpServer = http.createServer(app); // creating server from express appli
 const wsServer = new Server(httpServer);
 
 wsServer.on("connection", (socket) => {
-    console.log(socket);
+    socket.on("enter_room", (msg, done) => {
+        console.log(msg);
+        setTimeout(() => {
+            done();
+        }, 10000);
+    }); 
+    //"room" event를 받고 room안에 있는 msg를 받는다
+    //socket io를 사용하면 custom event를 넘겨받을수있다 (message가 아니어도됌)
+    // callback function: 프엔에서 받아온 function을 실행시켜줌
 });
 
 //now we are able to create websocket on top of this server
