@@ -2,6 +2,7 @@ import http from "http";
 import WebSocket from "ws";
 import express from "express";
 import { type } from "os";
+import { parse } from "path";
 
 const app = express();
 
@@ -36,6 +37,9 @@ wss.on("connection", (socket) => {
     //이렇게 해야 받은 메세지를 모든 소켓에 전달 가능
     sockets.push(socket);
 
+    //사용자가 닉네임 정하지 않은 경우 -> "Anon" 부여
+    socket["nickname"] = "Anon";    
+
     // 1. browser가 연결되었을 때
     console.log("Connected to Browser ✅");
 
@@ -43,10 +47,27 @@ wss.on("connection", (socket) => {
     socket.on("close", () => console.log("Disonnected from the Browser ❌"));
 
     // 3. browser가 서버에 메세지를 보냈을 때
-    socket.on("message", (message) => {
-        /* 각 브러우저를 aSocket으로 표시하고 메세지를 보낸다는 뜻 */
-        sockets.forEach(aSocket => aSocket.send(message.toString('utf8')));
-        //socket.send(message.toString('utf8'));   //프론트에서 받은 메세지를 다시 프론트로 보내줌
+    socket.on("message", (msg) => {
+        //JSON.parse(): string을 JavaScript object로 바꿔줌
+        const message = JSON.parse(msg);
+        switch(message.type){
+            case "new_message":
+                /* 각 브러우저를 aSocket으로 표시하고 메세지를 보낸다는 뜻 */
+              sockets.forEach(aSocket => aSocket.send(`${socket.nickname}: ${message.payload}`));
+              //socket.send(message.toString('utf8'));   //프론트에서 받은 메세지를 다시 프론트로 보내줌
+            case "nickname":
+                //Anon -> 사용자가 지정한 닉네임
+                socket["nickname"] = message.payload;
+        }
+
+        /* if문 대신 switch문 써줌
+        if(parsed.type === "new_message"){
+            sockets.forEach(aSocket => aSocket.send(parsed.payload));
+        }else if(parsed.type === "nickname"){
+            console.log(parsed.payload);
+        }
+        */
+        
     });
 
     // 4. browser에 메세지를 보내도록 작성
