@@ -46,6 +46,7 @@ wsServer.on("connection", (socket) => {
     socket.on("enter_room", (roomName, done) => {
         socket.join(roomName);//put name of the room
         done(); //calling the callack fun (showRoom)
+        socket.to(roomName).emit("welcome"); //emitting an event "welcome" to the entire room
     
     }); 
     //"room" event를 받고 room안에 있는 msg를 받는다
