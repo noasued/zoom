@@ -36,3 +36,13 @@ ___
     * if not, uses ***HTTP long-polling***
 * **is NOT an implementation of web socket**
 * if there is problem with WS, it will try to reconnect automatically : gives **reliability**
+___
+### room: 
+* groups of sockets that can communicate each other
+* like chat rooms
+* socketIO supports rooms natively
+ ```javascript
+ socket.join("name of the room")
+ socket.leave("name of the room")
+ socket.to("name of the room") -> sending msg to the whole room
+ ```
