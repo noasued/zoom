@@ -38,6 +38,11 @@ function handleSubmit(event){
     const input = messageForm.querySelector("input");
     //프론트의 form에서 백으로 메세지를 보내는 것
     socket.send(makeMessage("new_message", input.value));
+
+    const li = document.createElement("li");
+    li.innerText = `You: ${input.value}`;
+    messageList.append(li);
+
     input.value = "";
 }
 
