@@ -42,7 +42,7 @@ ___
 * like chat rooms
 * socketIO supports rooms natively
  ```javascript
- socket.join("name of the room")
- socket.leave("name of the room")
- socket.to("name of the room") -> sending msg to the whole room
+ socket.join("name of the room") //entering room
+ socket.leave("name of the room") // leaving room
+ socket.to("name of the room")  //sending msg to the whole room EXCEPT YOURSELF 
  ```
