@@ -2,20 +2,29 @@ const socket = io();
 
 const welcome = document.getElementById("welcome");
 const form = welcome.querySelector("form");
+const room = document.getElementById("room");
 
-function backendDone(msg){
-    console.log(`The backend says: `, msg);
+room.hidden = true;
+
+let roomName = "";
+
+function showRoom(){
+    welcome.hidden = true;
+    room.hidden = false;
+    const h3 = room.querySelector("h3");
+    h3.innerText = `Room: ${roomName}`;
 }
 
 function handleRoomSubmit(event){
     event.preventDefault();
     const input = form.querySelector("input");
-    socket.emit("enter_room", input.value, backendDone);
+    socket.emit("enter_room", input.value, showRoom);
     //send 대신 emit을 사용: emit되는 event의 이름은 상관없음:: emit an event called "room"
     //we can send an argument when emit :: String만 가능한 websocket과는 다르게 object 자체도 보낼 수 있음
     // 첫번째 argument: 보내고싶은 event :: 서버에서 on을 통해 받아주는 이름
     // 두번째 argument: 보내고싶은 payload :: 여러개 보낼 수 있음
     // 마지막 argument: callback function :: 서버에서 호출하는 function :: but the function is in FE
+    roomName = input.value; //room에 이름주기 
     input.value = "";
 }
 

@@ -40,16 +40,19 @@ const httpServer = http.createServer(app); // creating server from express appli
 const wsServer = new Server(httpServer);
 
 wsServer.on("connection", (socket) => {
+    socket.onAny((event) => {
+        console.log(`Socket Event: ${event}`); //could see what event happened with socket
+    });
     socket.on("enter_room", (roomName, done) => {
-        console.log(roomName);
-        setTimeout(() => {
-            done("hello from the backend");
-        }, 15000); 
+        socket.join(roomName);//put name of the room
+        done(); //calling the callack fun (showRoom)
+    
     }); 
     //"room" event를 받고 room안에 있는 msg를 받는다
     //socket io를 사용하면 custom event를 넘겨받을수있다 (message가 아니어도됌)
     // callback function: 프엔에서 받아온 function을 실행시켜줌:  BE에서 실행하지않음!! 보안상 문제가 생길수있음
             // 서버단에서 프엔에 있는 function을 실행시키도록 함
+            // argument를 같이 보낼 수 있음
 });
 
 //now we are able to create websocket on top of this server
