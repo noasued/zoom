@@ -5,12 +5,26 @@ const socket = io();    //io()는 자동적으로 back-end와 socket.io 연결�
 const welcome = document.getElementById("welcome");
 const form = welcome.querySelector("form");
 
+function backendDone(){
+    console.log("backend done");
+}
+
 function handleRoomSubmit(event){
     event.preventDefault();
     const input = form.querySelector("input");
-    socket.emit("enter_room", {payload: input.value }, () => {
-        console.log("server is done!");
-    });
+
+    //SocketIO socket.emit
+    // -socket.emit과 back-end의 socket.on에서 '같은 이름' 사용해야함
+    // -원하는 만큼 back-end에 보낼 수 있음
+    // -WebSocket은 string만 보낼 수 있었는데 이건 뭐든 다 됨!!
+    // -function도 보내기 가능 단, 함수는 argument의 마지막에 작성해야 함
+    // -function은 back에서 실행되는 것(x) front에서 실행(o) -> back에서 실행되면 보안상 문제됨
+    // -socket.emit("event이름", 원하는 것, ...., function)
+    socket.emit(
+        "enter_room",
+        input.value,
+        backendDone
+    );
     input.value = "";
 }
 
