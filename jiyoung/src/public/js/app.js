@@ -1,3 +1,4 @@
+
 //socketIO와 front-end 연결
 const socket = io();    //io()는 자동적으로 back-end와 socket.io 연결해주는 함수 -> port, ws 등 필요 없음
 
@@ -7,7 +8,9 @@ const form = welcome.querySelector("form");
 function handleRoomSubmit(event){
     event.preventDefault();
     const input = form.querySelector("input");
-    socket.emit("room", {payload: input.value });
+    socket.emit("enter_room", {payload: input.value }, () => {
+        console.log("server is done!");
+    });
     input.value = "";
 }
 

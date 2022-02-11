@@ -4,6 +4,7 @@ import SocketIO from "socket.io";
 import express from "express";
 import { type } from "os";
 import { parse } from "path";
+import { setTimeout } from "timers/promises";
 
 const app = express();
 
@@ -22,7 +23,12 @@ const wsServer = SocketIO(httpServer);
 
 //back에서 connection 받을 준비 됨
 wsServer.on("connection", socket => {
-    console.log(socket);
+    socket.on("enter_room", (msg, done) => {
+        console.log(msg);
+        setTimeout(() => {
+            done();
+        }, 10000);
+    });
 });
 
 
