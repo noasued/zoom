@@ -41,8 +41,43 @@ ___
 * groups of sockets that can communicate each other
 * like chat rooms
 * socketIO supports rooms natively
+* join, leave, disconnecting
+    * disconnecting: client is going to be disconnected, but not **yet leave the rooms**
  ```javascript
+ //socketIO 의 기본 메서드
  socket.join("name of the room") //entering room
  socket.leave("name of the room") // leaving room
- socket.to("name of the room")  //sending msg to the whole room EXCEPT YOURSELF 
+ socket.to("name of the room")  //sending msg to the whole room EXCEPT YOURSELF
  ```
+
+```javascript
+ //화면에 메세지를 보여주도록 하는 function
+function addMessage(message){
+    const ul = room.querySelector("ul");
+    const li = document.createElement("li");
+    li.innerText = message;
+    ul.appendChild(li);
+}
+```
+```javascript
+
+function handleMessageSubmit(event){
+    event.preventDefault();
+    const input = room.querySelector("input");
+    socket.emit("new_message", input.value, roomName, () => {
+        addMessage(`You: ${input.value}`);
+        input.value = "";
+    });
+ ```
+ 차이점: **callback을 부르는 시점이 message를 받고 난 후 이므로 두번째처럼 하면 addMessage() 에 빈 값이 들어감**  
+
+```javascript
+function handleMessageSubmit(event){
+    event.preventDefault();
+    const input = room.querySelector("input");
+    socket.emit("new_message", input.value, roomName, () => {
+        addMessage(`You: ${input.value}`);
+    });
+        input.value = "";
+ ```
+
