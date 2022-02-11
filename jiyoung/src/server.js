@@ -23,8 +23,8 @@ const wsServer = SocketIO(httpServer);
 
 //back에서 connection 받을 준비 됨
 wsServer.on("connection", socket => {
-    socket.on("enter_room", (msg, done) => {
-        console.log(msg);
+    socket.on("enter_room", (roomName, done) => {
+        console.log(roomName);
         setTimeout(() => {
             done();
         }, 10000);
@@ -86,7 +86,7 @@ wss.on("connection", (socket) => {
 */
 
 
-
+/*
 {
     type:"message";
     payload:"hello everyone";
@@ -96,3 +96,4 @@ wss.on("connection", (socket) => {
     type:"nickname";
     payload:"nico";
 }
+*/
