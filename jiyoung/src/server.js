@@ -1,5 +1,6 @@
 import http from "http";
-import WebSocket from "ws";
+//import WebSocket from "ws";
+import SocketIO from "socket.io";
 import express from "express";
 import { type } from "os";
 import { parse } from "path";
@@ -15,21 +16,32 @@ app.get("/*", (req, res) => res.redirect("/"));
 const handleListen = () => console.log('Listening on http://localhost:3000');
 
 //http server
-const server = http.createServer(app);
+const httpServer = http.createServer(app);
+//SocketIO server 생성
+const wsServer = SocketIO(httpServer);
 
-//ws server
-const wss = new WebSocket.Server({ server });
+//back에서 connection 받을 준비 됨
+wsServer.on("connection", socket => {
+    console.log(socket);
+});
 
+
+httpServer.listen(3000, handleListen);
+
+//ws server 생성
+//const wss = new WebSocket.Server({ server });
+
+/* WebSocket 이용한 방법
 //누군가 서버에 연결하면 그 connection을 여기에 담는 것
 const sockets = [];
 
 //프론트로 메세지 보내고 받고 할 수 있음
 //브라우저로의 연결
-/*
-function handleConnection(socket){
-    console.log(socket);
-}
-*/
+
+//function handleConnection(socket){
+//    console.log(socket);
+//}
+
 
 wss.on("connection", (socket) => {
     //크롬이 연결되면 크롬을 배열에 넣고, firefox가 연결되면 firefox를 배열에 넣는다는 뜻..
@@ -52,31 +64,22 @@ wss.on("connection", (socket) => {
         const message = JSON.parse(msg);
         switch(message.type){
             case "new_message":
-                /* 각 브러우저를 aSocket으로 표시하고 메세지를 보낸다는 뜻 */
+                // 각 브러우저를 aSocket으로 표시하고 메세지를 보낸다는 뜻
               sockets.forEach(aSocket => aSocket.send(`${socket.nickname}: ${message.payload}`));
               //socket.send(message.toString('utf8'));   //프론트에서 받은 메세지를 다시 프론트로 보내줌
             case "nickname":
                 //Anon -> 사용자가 지정한 닉네임
                 socket["nickname"] = message.payload;
         }
-
-        /* if문 대신 switch문 써줌
-        if(parsed.type === "new_message"){
-            sockets.forEach(aSocket => aSocket.send(parsed.payload));
-        }else if(parsed.type === "nickname"){
-            console.log(parsed.payload);
-        }
-        */
-        
     });
 
     // 4. browser에 메세지를 보내도록 작성
     // connection이 생겼을 때 소켓으로 메세지 보냄
     //socket.send("hello!!!!");
 });
+*/
 
 
-server.listen(3000, handleListen);
 
 {
     type:"message";
