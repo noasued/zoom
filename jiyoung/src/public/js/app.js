@@ -63,3 +63,15 @@ setTimeout(() => {
     socket.send("hello from the browser!");
 }, 10000);
 */
+
+/*
+note
+
+1. SocketIO
+    - 실시간, 양방향, event 기반의 통신을 가능하게 함
+    - websocket을 실행하는 것이 아니라
+    - 가끔 websocket을 이용해서 실시간, 양방향, event 기반 통신을 제공하는 프레임워크/라이브러리
+    - automatic reconnection 기능 제공 -> 탄력성 뛰어남 (websocket에서는 연결 끊기면 직접 기능 구현해줘야 함)
+
+    즉, front와 back의 실시간 통신은 websocket만으로도 가능하지만 SocketIO는 이를 더 쉽게 만드는 편리한 코드 제공
+*/
