@@ -1,3 +1,7 @@
+//socketIO와 front-end 연결
+const socket = io();    //io()는 자동적으로 back-end와 socket.io 연결해주는 함수 -> port, ws 등 필요 없음
+
+/* WebSocket 사용
 const messageList = document.querySelector("ul");
 const nickForm = document.querySelector("#nick");
 const messageForm = document.querySelector("#message");
@@ -14,13 +18,13 @@ function makeMessage(type, payload){
 
 //socket event 종류: open, message, close, error
 
-/* socket open */
+socket open 
 //소켓이 서버와 연결되면 실행
 socket.addEventListener("open", () => {
     console.log("Connected to Server ✅");
 });
 
-/* socket message */
+socket message 
 //백에서 프론트로 보낸 메세지를 받음
 socket.addEventListener("message", (message) => {
     const li = document.createElement("li");
@@ -28,7 +32,7 @@ socket.addEventListener("message", (message) => {
     messageList.append(li);
 })
 
-/* socket close */ 
+socket close
 socket.addEventListener("close", () => {
     console.log("Disonnected from Server ❌");
 });
@@ -58,13 +62,13 @@ nickForm.addEventListener("submit", handleNickSubmit);
 
 //프론트에서 백으로 메세지 보내는 것
 //timeout -> 바로 실행되지 않음
-/*
+
 setTimeout(() => {
     socket.send("hello from the browser!");
 }, 10000);
-*/
 
-/*
+
+
 note
 
 1. SocketIO
