@@ -40,23 +40,26 @@ const httpServer = http.createServer(app); // creating server from express appli
 const wsServer = new Server(httpServer);
 
 wsServer.on("connection", (socket) => {
+    socket["nickname"] = "Guest"
     socket.onAny((event) => {
         console.log(`Socket Event: ${event}`); //could see what event happened with socket
     });
     socket.on("enter_room", (roomName, done) => {
         socket.join(roomName);//put name of the room
         done(); //calling the callack fun (showRoom)
-        socket.to(roomName).emit("welcome"); //emitting an event "welcome" to the entire room
+        socket.to(roomName).emit("welcome", socket.nickname); //emitting an event "welcome" to the entire room
     
     }); 
     socket.on("disconnecting", () => {
-        socket.rooms.forEach(room => socket.to(room).emit("bye"));
+        socket.rooms.forEach(room => socket.to(room).emit("bye", socket.nickname));
     });
 
     socket.on("new_message", (msg, roomName, done) => {
-        socket.to(roomName).emit("new_message", msg);
+        socket.to(roomName).emit("new_message", `${socket.nickname}: ${msg}`);
         done();
     });
+
+    socket.on("nickname", (nickname) => (socket["nickname"] = nickname));
     //"room" event를 받고 room안에 있는 msg를 받는다
     //socket io를 사용하면 custom event를 넘겨받을수있다 (message가 아니어도됌)
     // callback function: 프엔에서 받아온 function을 실행시켜줌:  BE에서 실행하지않음!! 보안상 문제가 생길수있음
