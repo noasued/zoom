@@ -4,9 +4,17 @@ const socket = io();    //io()는 자동적으로 back-end와 socket.io 연결�
 
 const welcome = document.getElementById("welcome");
 const form = welcome.querySelector("form");
+const room = document.getElementById("room");
 
-function backendDone(){
-    console.log("backend done");
+room.hidden = true;
+
+let roomName;
+
+function showRoom(){
+    welcome.hidden = true;
+    room.hidden = false;
+    const h3 = room.querySelector("h3");
+    h3.innerText = `Room ${roomName}`;
 }
 
 function handleRoomSubmit(event){
@@ -20,11 +28,8 @@ function handleRoomSubmit(event){
     // -function도 보내기 가능 단, 함수는 argument의 마지막에 작성해야 함
     // -function은 back에서 실행되는 것(x) front에서 실행(o) -> back에서 실행되면 보안상 문제됨
     // -socket.emit("event이름", 원하는 것, ...., function)
-    socket.emit(
-        "enter_room",
-        input.value,
-        backendDone
-    );
+    socket.emit("enter_room", input.value, showRoom);
+    roomName = input.value;
     input.value = "";
 }
 

@@ -23,11 +23,12 @@ const wsServer = SocketIO(httpServer);
 
 //back에서 connection 받을 준비 됨
 wsServer.on("connection", socket => {
+    socket.onAny((event) => {   //onAny: socket에 있는 모든 event를 살핌
+        console.log(`Socket Event: ${event}`);
+    })
     socket.on("enter_room", (roomName, done) => {
-        console.log(roomName);
-        setTimeout(() => {
-            done();
-        }, 10000);
+        socket.join(roomName);
+        done();
     });
 });
 
