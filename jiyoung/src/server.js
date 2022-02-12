@@ -28,8 +28,18 @@ wsServer.on("connection", socket => {
     })
     socket.on("enter_room", (roomName, done) => {
         socket.join(roomName);
-        done();
+        done(); //함수는 호출됐을 때 back(x) front(o)에서 실행됨
         socket.to(roomName).emit("welcome");    //"welcome" event를 roomName에 있는 모든 사람에게 emit한 것 front에서 받아야 화면에 나옴
+    });
+
+    //disconnecting: 클라이언트가 서버와 연결이 끊어지기 전에 마지막 메세지 보낼 수 있음
+    socket.on("disconnecting", () => {
+        socket.rooms.forEach((room) => socket.to(room).emit("bye"));
+    });
+
+    socket.on("new_message", (msg, room, done) => {
+        socket.to(room).emit("new_message", msg);
+        done();
     });
 });
 
