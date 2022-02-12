@@ -22,7 +22,21 @@ const httpServer = http.createServer(app); //서버에 접근 가능. 여기서 
 const wsServer = SocketIO(httpServer);
 
 wsServer.on("connection", socket => {
-  console.log(socket);
+  socket.onAny((evnet) => {
+    console.log(`Socket Event:${evnet}`);
+  });
+  socket.on("enter_room", (roomName, done) => {
+    socket.join(roomName);// join a room
+    done();
+    socket.to(roomName).emit("welcome"); // roomName에 있는 모든 사람에게 인사함
+  });
+  socket.on("disconnecting", () => {
+    socket.rooms.forEach(room => socket.to(room).emit("bye"));
+  });
+  socket.on("new_message", (msg, room, done) => {
+    socket.to(room).emit("new_message", msg);
+    done();
+  })
 });
 
 
