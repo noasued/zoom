@@ -29,6 +29,7 @@ wsServer.on("connection", socket => {
     socket.on("enter_room", (roomName, done) => {
         socket.join(roomName);
         done();
+        socket.to(roomName).emit("welcome");    //"welcome" event를 roomName에 있는 모든 사람에게 emit한 것 front에서 받아야 화면에 나옴
     });
 });
 
