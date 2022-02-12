@@ -3,6 +3,7 @@
 import http from "http";
 import WebSocket from "ws";
 import express from "express"; 
+import { parse } from "path";
 
 const app = express();
 
@@ -26,16 +27,31 @@ const wss = new WebSocket.Server({ server }); //wss생성
     wss.on("connection", handleConnection);
 */
 
+const sockets = [];
+
 wss.on("connection", (socket) => {
+    sockets.push(socket); //브라우저를 연결할때 sockets에 넣어줌.
+    socket["nickname"] = "Anon" //익명 user
     console.log("Connected to Browser ✅");
     socket.on("close", () => console.log("Disconnected from the Browser ❌"));
-    socket.on("message", (message) => {
-        console.log(message.toString('utf8')); //Buffer -> utf-8
+    socket.on("message", (msg) => {
+        //const messageString = message.toString('utf8');
+        const message = JSON.parse(msg); //배열로 형변환
+        switch(message.type){
+            case "new_message":
+                sockets.forEach((aSocket) => aSocket.send(`${socket.nickname} : ${message.payload}`)); //sockets안에잇는 브라우저에 메세지 보내기  
+            case "nickname":
+                socket["nickname"] = message.payload; //nickname저장
+            break;
+        }
+
+        //socket.send(message); back-end에서 메세지 전송
+        //console.log(message.toString('utf8')); Buffer -> utf-8
     });
-    socket.send("hello!!");
-});
+}); //실행횟수 : 브라우저 당 1개
 
 server.listen(3000, handelListen); //http와 같은 서버 사용
+
 
 
 
