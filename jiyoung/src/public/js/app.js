@@ -10,6 +10,15 @@ room.hidden = true;
 
 let roomName;
 
+//화면에 메세지 띄움
+function addMessage(message){
+    const ul = room.querySelector("ul");
+    const li = document.createElement("li");
+    li.innerText = message;
+    ul.appendChild(li);
+}
+
+//채팅방 입장
 function showRoom(){
     welcome.hidden = true;
     room.hidden = false;
@@ -34,6 +43,13 @@ function handleRoomSubmit(event){
 }
 
 form.addEventListener("submit", handleRoomSubmit);
+
+
+//addEventListener를 사용하지 않고 socket.on을 우리가 원하는 데로 쓸 수 있음
+//back에서 "welcome" event가 발생하면 실행한다는 뜻
+socket.on("welcome", () => {
+    addMessage("someone joined!");
+})
 
 /* WebSocket 사용
 const messageList = document.querySelector("ul");
