@@ -1,6 +1,7 @@
 import http from "http";
 // import WebSocket from "ws";
-import SocketIO from "socket.io";
+import { Server } from "socket.io";
+import { instrument } from "@socket.io/admin-ui";
 import express from "express";
 
 const app = express();
@@ -19,24 +20,69 @@ const handleListen = () => console.log(`Listening on http://localhost:3000`);
 //ws 기능 설치를 위해 위 한 줄 가리고 아래부터 진행
 
 const httpServer = http.createServer(app); //서버에 접근 가능. 여기서 webSocket 만들 수 있음
-const wsServer = SocketIO(httpServer);
+const wsServer = new Server(httpServer, {
+  cors: {
+    origin: ["https://admin.socket.io"],
+    credentials: true,
+  }
+});
 
-wsServer.on("connection", socket => {
+instrument(wsServer, {
+  auth: false
+});
+
+
+function publicRooms() {
+  const {
+    sockets: {
+      adapter: { sids, rooms },
+    },
+  } = wsServer;
+  const publicRooms = [];
+  rooms.forEach((_, key) => {
+    if (sids.get(key) === undefined) {
+      publicRooms.push(key)
+    }
+  });
+  return publicRooms;
+}
+
+function countRoom(roomName) {
+  return wsServer.sockets.adapter.rooms.get(roomName)?.size;
+}
+
+wsServer.on("connection", (socket) => {
+  // wsServer.socketsJoin("announcement");
+  socket["nickname"] = "Anon";
   socket.onAny((evnet) => {
     console.log(`Socket Event:${evnet}`);
   });
+
   socket.on("enter_room", (roomName, done) => {
     socket.join(roomName);// join a room
     done();
-    socket.to(roomName).emit("welcome"); // roomName에 있는 모든 사람에게 인사함
+    socket.to(roomName).emit("welcome", socket.nickname, countRoom(roomName)); // roomName에 있는 모든 사람에게 인사함
+    wsServer.sockets.emit("room_change", publicRooms());
   });
+
   socket.on("disconnecting", () => {
-    socket.rooms.forEach(room => socket.to(room).emit("bye"));
+    socket.rooms.forEach((room) =>
+      socket.to(room).emit("bye", socket.nickname, countRoom(room) - 1)
+    );
   });
+
+  socket.on("disconnect", () => {
+    wsServer.sockets.emit("room_change", publicRooms());
+  });
+
   socket.on("new_message", (msg, room, done) => {
-    socket.to(room).emit("new_message", msg);
+    socket.to(room).emit("new_message", `${socket.nickname}: ${msg}`);
     done();
-  })
+  });
+
+  socket.on("nickname", (nickname) => (socket["nickname"] = nickname));
+
+
 });
 
 
