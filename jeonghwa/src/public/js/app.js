@@ -1,51 +1,26 @@
-const messageList = document.querySelector("ul");
-const nickForm = document.querySelector("#nickname");
-const messageForm = document.querySelector("#message");
-const socket = new WebSocket(`ws://${window.location.host}`); //ws 프로토콜
+// 연결된 모든 socket을 자동으로 추적하고 있음.
+//front-end 에서 back-end를 연결
+const socket = io();
 
-function makeMessage(type, payload) {
-    const msg = { type, payload };
-    return JSON.stringify(msg); //string으로 형변환
-}
+const welcome = document.getElementById("welcome");
+const form = welcome.querySelector("form");
 
-//서버와 연결되었을 때
-socket.addEventListener("open", () =>{
-    console.log("Connected to Server ✅");
-});
+function backendDone(msg){
+    console.log(`The backend says : `, msg);
+} 
 
-//서버에서 메세지를 받았을 때
-socket.addEventListener("message", (message) => {
-    //console.log("New message: ", message.data);
-    const li = document.createElement("li");
-    li.innerText = message.data;
-    messageList.append(li);
-});
-
-//서버로 부터 연결이 끊겼을 때
-socket.addEventListener("close", () => {
-    console.log("Disconnected from Server ❌");
-});
-
-//메세지 보낸 후 바로 실행되지 않게 timeout 사용
-/*setTimeout(() => {
-    socket.send("hello from the browser!");
-}, 10000);*/
-
-//메세지 전송
-function handleSubmit(event){
-    event.preventDefault(); //이벤트 바로 시작하지 않게 막기
-    const input = messageForm.querySelector("input");
-   // console.log(input.value);
-    socket.send(makeMessage("new_message", input.value)); //back-end로 메세지 전송
-    input.value = ""; //초기화
-}
-
-//nickname 지정
-function handleNickSubmit(event){
+function handleRoomSubmit(event){
     event.preventDefault();
-    const input = nickForm.querySelector("input");
-    socket.send(makeMessage("nickname", input.value));
+    const input = form.querySelector("input");
+    
+    //emit("event name", payload(서버로 보내는), fuction(서버에서 호출하는))
+    // => 여러개의 argument를 보낼수 있음!
+    //emit의 마지막 argument가 function이기만 하면 됨!!
+    socket.emit("enter_room", {payload : input.value }, backendDone);
+    //backendDone은 back server에서 명령을 받아 front에서 실행!
+
+    //socket.send와 유사함. -> object를 string으로 변환해서 넣어야함
+    //socket IO는 알아서 변환해줌 (object전송가능!!)
     input.value = ""; //초기화
 }
-messageForm.addEventListener("submit", handleSubmit);
-nickForm.addEventListener("submit", handleNickSubmit);
+form.addEventListener("submit", handleRoomSubmit);

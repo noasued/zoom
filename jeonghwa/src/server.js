@@ -1,7 +1,10 @@
 //Express로 views설정, 렌더링.
 //나머지는 websocket에서 실시간으로 일어남.
+
+//import WebSocket from "ws";
+
 import http from "http";
-import WebSocket from "ws";
+import SocketIO from "socket.io";
 import express from "express"; 
 import { parse } from "path";
 
@@ -13,27 +16,27 @@ app.use("/public", express.static(__dirname + "/public"));
 app.get("/", (_, res) => res.render("home"));
 app.get("/*", (_, res) => res.redirect("/")); //주소를 변경해도 home으로!
 
-//http 서버 (views, static file, home, redirection 사용 시)
-// ws 서버 2개 가동.
-const handelListen = () => console.log(`Listening on http://localhost:3000`);
-//app.listen(3000, handelListen);
+const httpServer = http.createServer(app); //http 서버생성
+const wsServer = SocketIO(httpServer);
 
-const server = http.createServer(app); //http 서버생성
+wsServer.on("connection", (socket) => {
+    //socket.on("any event") : message이벤트가 아니어도 됨. -> custom event
+    socket.on("enter_room", (msg, done) => {
+        console.log(msg);
+        setTimeout(() => {
+            done("hello form the backend"); //front로 명령을 보냄 -> 보안문제
+        }, 3000);
+    });
+});
+
+/*
 const wss = new WebSocket.Server({ server }); //wss생성
-
-/*function handleConnection(socket) {
-    console.log(socket); //frontend와 실시간으로 소통할 수 있음.
-}
-    wss.on("connection", handleConnection);
-*/
-
 const sockets = [];
-
 wss.on("connection", (socket) => {
     sockets.push(socket); //브라우저를 연결할때 sockets에 넣어줌.
     socket["nickname"] = "Anon" //익명 user
     console.log("Connected to Browser ✅");
-    socket.on("close", () => console.log("Disconnected from the Browser ❌"));
+    socket.on("close", onSocketClose);
     socket.on("message", (msg) => {
         //const messageString = message.toString('utf8');
         const message = JSON.parse(msg); //배열로 형변환
@@ -49,8 +52,24 @@ wss.on("connection", (socket) => {
         //console.log(message.toString('utf8')); Buffer -> utf-8
     });
 }); //실행횟수 : 브라우저 당 1개
+*/
 
-server.listen(3000, handelListen); //http와 같은 서버 사용
+/*function onSocketClose() {
+    console.log("Disconnected from the Browser ❌")
+}*/
+
+/*function handleConnection(socket) {
+    console.log(socket); //frontend와 실시간으로 소통할 수 있음.
+}
+    wss.on("connection", handleConnection);
+*/
+
+//http 서버 (views, static file, home, redirection 사용 시)
+// ws 서버 2개 가동.
+const handelListen = () => console.log(`Listening on http://localhost:3000`);
+//app.listen(3000, handelListen);
+
+httpServer.listen(3000, handelListen); //http와 같은 서버 사용
 
 
 
