@@ -20,12 +20,18 @@ function addMessage(message){
 
 function handleMessageSubmit(event){
     event.preventDefault();
-    const input = room.querySelector("input");
+    const input = room.querySelector("#msg input");
     const value = input.value;
     socket.emit("new_message", input.value, roomName, () => {
         addMessage(`You: ${value}`);
     });
     input.value = "";
+}
+
+function handleNicknameSubmit(event){
+    event.preventDefault();
+    const input = room.querySelector("#name input");
+    socket.emit("nickname", input.value);
 }
 
 //채팅방 입장
@@ -34,8 +40,10 @@ function showRoom(){
     room.hidden = false;
     const h3 = room.querySelector("h3");
     h3.innerText = `Room ${roomName}`;
-    const form = room.querySelector("form");
-    form.addEventListener("submit", handleMessageSubmit);
+    const msgForm = room.querySelector("#msg");
+    const nameForm = room.querySelector("#name");
+    msgForm.addEventListener("submit", handleMessageSubmit);
+    nameForm.addEventListener("submit", handleNicknameSubmit);
 }
 
 function handleRoomSubmit(event){
@@ -59,12 +67,12 @@ form.addEventListener("submit", handleRoomSubmit);
 
 //addEventListener를 사용하지 않고 socket.on을 우리가 원하는 데로 쓸 수 있음
 //back에서 "welcome" event가 발생하면 실행한다는 뜻
-socket.on("welcome", () => {
-    addMessage("someone joined!");
+socket.on("welcome", (user) => {
+    addMessage(`${user} arrived!`);
 })
 
-socket.on("bye", () => {
-    addMessage("someone left TT");
+socket.on("bye", (left) => {
+    addMessage(`${left} left TT`);
 });
 
 socket.on("new_message", addMessage);
