@@ -42,12 +42,12 @@ const wsServer = new Server(httpServer);
 wsServer.on("connection", (socket) => {
     socket["nickname"] = "Guest"
     socket.onAny((event) => {
+        console.log(wsServer.sockets.adapter);
         console.log(`Socket Event: ${event}`); //could see what event happened with socket
     });
     socket.on("enter_room", (roomName, done) => {
-        done();
         socket.join(roomName);//put name of the room
-
+        done();
         socket.to(roomName).emit("welcome", socket.nickname); //emitting an event "welcome" to the entire room
 
     }); 
