@@ -1,11 +1,21 @@
 ### request & response:
 
-![](../notes/note_img/getRequest.png) 
+```javascript
+app.get("/", (req, res) => res.render("home")); 
+/*
+1. create route handler to render views (home.pug)
+2. when user sends GET request to homepage, server respond with a template.
+*/
+
+app.get("/*", (req, res) => res.redirect("/")); 
+/* 
+1. for all url redirect to "/" which is home in this case : catchAll
+2. when user sends GET request to any page, server respond with a 'redirect'
+*/
+
+```
 
 
-> 10: when user sends GET request to homepage, server respond with a template.
-
-> 11: when user sends GET request to any page, server respond with a 'redirect'
 ___
 ### http:
 - protocol, where all the servers work
@@ -80,4 +90,15 @@ function handleMessageSubmit(event){
     });
         input.value = "";
  ```
+ ___
+ ### Adapter
+ * server-side component
+ * window into app
+ * tells who is connected how many rooms are currently in
+ * synchronizing real-time app among different servers
+ * in memory adapter: adapter within the server    
+    * Can't communicate with clients connected to other servers
+
+<img width="598" alt="adapter" src="https://user-images.githubusercontent.com/86010657/153757727-e06fc061-0e30-4872-a0cd-9d6ed7642d62.png">
+
 
