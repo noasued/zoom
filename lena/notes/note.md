@@ -90,4 +90,13 @@ function handleMessageSubmit(event){
     });
         input.value = "";
  ```
+ ___
+ ### Adapter
+ * server-side component
+ * window into app
+ * tells who is connected how many rooms are currently in
+ * synchronizing real-time app among different servers
+ * in memory adapter: adapter within the server    
+    * Can't communicate with clients connected to other servers
+
 
