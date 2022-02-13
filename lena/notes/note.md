@@ -99,4 +99,6 @@ function handleMessageSubmit(event){
  * in memory adapter: adapter within the server    
     * Can't communicate with clients connected to other servers
 
+<img width="598" alt="adapter" src="https://user-images.githubusercontent.com/86010657/153757727-e06fc061-0e30-4872-a0cd-9d6ed7642d62.png">
+
 
