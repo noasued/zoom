@@ -13,12 +13,9 @@ html(lang="en")
                 input(type="text", placeholder="choose a nickname", required)
                 button Save
             ul
-            // 1. li를 만들어주고, 그 안에 메세지를 적은 다음, li를 ul안으로 넣어주면 된다. -> app.js에서 작업
             form#message
                 input(type="text", placeholder="write a msg", required)
-                // form input button만 작성하면 backend로 nickname을 보내게 된다. 
-                // backend에서는 message를 구분하지 못한다. (∴내가 msg를 보낼 때 모두에게 보내고 있기 때문에) => msg type 만들어주기 (id 만들어주기)
-            ul  <!--ul 만들기(message list)-->
+            ul 
             form
                 input(type="text", placeholder="write a msg", required)
                 button Send
