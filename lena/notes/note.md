@@ -1,11 +1,21 @@
 ### request & response:
 
-![](../notes/note_img/getRequest.png) 
+```javascript
+app.get("/", (req, res) => res.render("home")); 
+/*
+1. create route handler to render views (home.pug)
+2. when user sends GET request to homepage, server respond with a template.
+*/
+
+app.get("/*", (req, res) => res.redirect("/")); 
+/* 
+1. for all url redirect to "/" which is home in this case : catchAll
+2. when user sends GET request to any page, server respond with a 'redirect'
+*/
+
+```
 
 
-> 10: when user sends GET request to homepage, server respond with a template.
-
-> 11: when user sends GET request to any page, server respond with a 'redirect'
 ___
 ### http:
 - protocol, where all the servers work
