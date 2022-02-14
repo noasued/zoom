@@ -77,6 +77,20 @@ socket.on("bye", (left) => {
 
 socket.on("new_message", addMessage);
 
+socket.on("room_change", (rooms) => {
+    const roomList = welcome.querySelector("ul");
+    roomList.innerHTML = "";
+    //ㄴㅐ 어플리케이션에 room이 하나도 없을 때 모든 것을 비워줌
+    if(rooms.length === 0){
+        return;
+    }
+    rooms.forEach(room => {
+        const li = document.createElement("li");
+        li.innerText = room;
+        roomList.append(li);
+    });
+});
+
 /* WebSocket 사용
 const messageList = document.querySelector("ul");
 const nickForm = document.querySelector("#nick");
