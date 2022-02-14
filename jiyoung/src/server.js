@@ -1,7 +1,8 @@
 import http from "http";
 //import WebSocket from "ws";
-import SocketIO from "socket.io";
+import {Server} from "socket.io";
 import express from "express";
+import {instrument} from "@socket.io/admin-ui";
 import { type } from "os";
 import { parse } from "path";
 import { setTimeout } from "timers/promises";
@@ -20,7 +21,15 @@ const handleListen = () => console.log('Listening on http://localhost:3000');
 //http server
 const httpServer = http.createServer(app);
 //SocketIO server 생성
-const wsServer = SocketIO(httpServer);
+const wsServer = new Server(httpServer, {
+    cors: {
+        origin: ["https://admin.socket.io"],
+        credentials: true,
+    },
+});
+instrument(wsServer, {
+    auth: false
+});
 
 function publicRooms(){
     const {
