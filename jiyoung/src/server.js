@@ -5,6 +5,7 @@ import express from "express";
 import { type } from "os";
 import { parse } from "path";
 import { setTimeout } from "timers/promises";
+import { count } from "console";
 
 const app = express();
 
@@ -36,6 +37,10 @@ function publicRooms(){
     return publicRooms;
 }
 
+function countRoom(roomName){
+    return wsServer.sockets.adapter.rooms.get(roomName)?.size;
+}
+
 //back에서 connection 받을 준비 됨
 wsServer.on("connection", socket => {
     socket["nickname"] = "Anon";
@@ -46,14 +51,14 @@ wsServer.on("connection", socket => {
     socket.on("enter_room", (roomName, done) => {
         socket.join(roomName);
         done(); //함수는 호출됐을 때 back(x) front(o)에서 실행됨
-        socket.to(roomName).emit("welcome", socket.nickname);    //"welcome" event를 roomName에 있는 모든 사람에게 emit한 것 front에서 받아야 화면에 나옴
+        socket.to(roomName).emit("welcome", socket.nickname, countRoom(roomName));    //"welcome" event를 roomName에 있는 모든 사람에게 emit한 것 front에서 받아야 화면에 나옴
         wsServer.sockets.emit("room_change", publicRooms());
     });
 
     //disconnecting: 클라이언트가 서버와 연결이 끊어지기 전에 마지막 메세지 보낼 수 있음
     socket.on("disconnecting", () => {
         socket.rooms.forEach((room) => 
-            socket.to(room).emit("bye", socket.nickname)
+            socket.to(room).emit("bye", socket.nickname, countRoom(room) -1)
         );
     });
     socket.on("disconnect", () =>{

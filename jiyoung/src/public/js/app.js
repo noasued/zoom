@@ -67,11 +67,15 @@ form.addEventListener("submit", handleRoomSubmit);
 
 //addEventListener를 사용하지 않고 socket.on을 우리가 원하는 데로 쓸 수 있음
 //back에서 "welcome" event가 발생하면 실행한다는 뜻
-socket.on("welcome", (user) => {
+socket.on("welcome", (user, newCount) => {
+    const h3 = room.querySelector("h3");
+    h3.innerText = `Room ${roomName} (${newCount})`;
     addMessage(`${user} arrived!`);
 })
 
-socket.on("bye", (left) => {
+socket.on("bye", (left, newCount) => {
+    const h3 = room.querySelector("h3");
+    h3.innerText = `Room ${roomName} (${newCount})`;
     addMessage(`${left} left TT`);
 });
 
