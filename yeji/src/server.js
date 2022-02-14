@@ -1,40 +1,10 @@
-/* 아주 쉽게 실시간 기능을 만들어주는 framework 사용하기 
-    framework의 이름 : socket IO
-    => socket IO : 나온지 매우 오래되었고, 안정적이다.
-       socket IO 역할 : 실시간, 양방향, event 기반의 통신을 가능케 함 (websocket과 매우 비슷해보임)
-
-       websocekt과의 공통점 : 양방향(browser와 backend의 양방향을 의미함)으로 통신, 둘 다 메세지를 주고 받을 수 O, event 기반의 통신을 함
-
-       그렇다면 socket IO의 다른 점은 ?
-        - socket IO는 webSocket보다 조금 더 무겁다. (ws는 많은 기능이 있지 않기때문에 용량이 매우 작음)
-        - socket IO는 websocket을 실행하는 것이 X => socket IO는 framework인데 실시간/양방향/event기반 통신을 제공함
-        - websocket보다 탄력성이 뛰어남(websocket은 Socket IO가 실시간/양방향/event 기반 통신을 제공하는 방법 중 하나, 많은 방법 중 하나일 뿐)
-          ex. 만약 내 browser 또는 핸드폰이 websocket을 지원하지 않는다면(websocket에 문제가 생겨도), Socket IO는 계속 작동한다. 
-          => socket IO는 "websocket의 부가기능이 아니다."
-
-          "탄력성"
-          => websocket이 이용이 불가능하다면 socket IO는 다른 방법을 이용해서 계속 작동할 것 (websocket을 지원하지 않는 경우, HTTP long polling과 같은 것을 사용할 것)
-          => Socket IO가 websocket을 이용한 연결에 실패하더라도 다른 방법을 찾을 것이라는 말
-
-    * socket IO는 가끔 websocket을 이용해서 실시간/양방향/event 기반 통신을 제공하는 framework이다.
-               + front와 backend 간 실시간 통신을 가능하게 해주는 framework 또는 라이브러리이다. (front와 backend 간 실시간 통신을 websocket을 이용해서 할 수 O)
-    -> front와 backend 간 실시간 통신을 하기 위해서 꼭 Socket IO를 사용할 필요는 X
-       그러나 Socket IO는 실시간 기능 등을 더 쉽게 만드는 편리한 코드를 제공한다.
-
-        - socket IO는 우리에게 신뢰성(reliability)을 주는 것
-            즉, 
-                1) 브라우저가 websocket 지원을 하지 않거나, 
-                2) websocket 연결에 문제가 있거나, 
-                3) 회사에서 websocket 사용이 안되는 경우나, 
-                4) Firewall 혹은 proxy가 있는 등등의 경우에도 
-            socket IO는 실시간 기능을 제공해준다.
-
-*/
+// socket IO 설치하기
 
 import http from "http";
-import WebSocket from "ws";
+// import WebSocket from "ws";
 import express from "express";
-// import { copyFileSync } from "fs";
+// socket IO import 해주기
+import SocketIO from "socket.io";
 
 const app = express();
 
@@ -46,13 +16,29 @@ app.get("/*", (req,res) => res.redirect("/"));
 
 const handleListen = () => console.log(`Listening on http://localhost:3000`);
 
-const server = http.createServer(app); 
-const wss = new WebSocket.Server({ server });
+const httpServer = http.createServer(app); 
+// const wss = new WebSocket.Server({ server });
+
+// WebSocket 대신 Socket IO 서버 만들기
+// 1. backend에 connection 받을 준비
+const wsServer = SocketIO(httpServer);
+
+// front와 back에 모두 socket IO 설치를 해야한다.
+wsServer.on("connection", socket => {
+    console.log(socket);
+});
 
 function onSocketClose(){
     console.log("Disconnected from the Browser ❌");
 }
 
+// websocket 코드와 socket IO 코드를 비교하기 위해 주석처리
+/* 이제까지 websocket을 어떻게 만들었는지 상기해보자
+    1) HTTP 서버 생성 (const server = http.createServer(app))
+    2) 새로운 WebSocket을 만들 때 HTTP를 위에 쌓아올리며 만들었음 (const wss = new WebSocket.Server({ server });)
+    => Socket IO 생성도 마찬가지이다. 
+*/
+/*
 const sockets = [];
 
 wss.on("connection", (socket) => {
@@ -75,5 +61,22 @@ wss.on("connection", (socket) => {
         sockets.forEach(aSocket => aSocket.send(message));
     });
 });
+*/
+httpServer.listen(3000, handleListen);
 
-server.listen(3000, handleListen);
+/* socket IO를 설치해주는 것으로 Socket IO는 url을 제공한다. (/socket.io/socket.io.js)
+    localhost:3000은 /socket.io/socket.io.js 라는 url을 제공한다. => 이것을 user에게 준다.
+    이렇게 하는 이유는 SocketIO가 websocket의 부가기능이 아니기 때문에
+
+    Socket IO는 "재연결"과 같은 부가기능이 있다.
+    또는, websocket을 사용할 수 없을 때 다른 것을 사용할 것
+    => 내가 socketIO를 서버에 설치한 것처럼 client에도 socketIO를 설치해야 함
+
+    * socket IO는 websocket의 부가기능 X
+      과거에는 backend에 아무것도 설치할 필요가 없었음           ∴ browser가 제공하는 webSocket API를 사용하면 됐었다.
+      하지만 browser가 주는 websocket은 socket IO와 호환이 안됨 ∴ socket IO가 더 많은 기능을 제공하기 때문에
+      ∵ socket IO를 browser에 설치해야 한다.
+      그래서 url을 준 것이다. frontend에서는 이걸 쉽게 import할 수 있다.
+
+
+*/

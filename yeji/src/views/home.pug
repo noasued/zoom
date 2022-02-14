@@ -9,15 +9,8 @@ html(lang="en")
     body 
         header
             h1 Noom
-            form#nickname 
-                input(type="text", placeholder="choose a nickname", required)
-                button Save
-            ul
-            form#message
-                input(type="text", placeholder="write a msg", required)
-            ul 
-            form
-                input(type="text", placeholder="write a msg", required)
-                button Send
-        button call
+            // user가 chat에 참가하고 싶으면 room을 먼저 만들도록 하기 (public char 사용 X) => 이것을 하기 전에 socket IO 설치를 꼭 해줘야 함
+            main 
+
+        script(src = "/socket.io/socket.io.js")
         script(src = "/public/js/app.js")
