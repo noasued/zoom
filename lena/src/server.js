@@ -51,6 +51,8 @@ getting sids, rooms from wsServer.sockets.adapter
 const sids = wsServer.sockets.adapter.sids;
 const rooms = wsServer.sockets.adapter.rooms;
 */
+
+//room lists
     const publicRooms = [];
     rooms.forEach((_, key) => {
         if(sids.get(key) === undefined){
@@ -59,6 +61,10 @@ const rooms = wsServer.sockets.adapter.rooms;
     });
     return publicRooms;
 
+}
+//user count
+function countRoom(roomName){
+    return wsServer.sockets.adapter.rooms.get(roomName)?.size;
 }
 
 wsServer.on("connection", (socket) => {
@@ -70,13 +76,15 @@ wsServer.on("connection", (socket) => {
     socket.on("enter_room", (roomName, done) => {
         socket.join(roomName);//put name of the room
         done();
-        socket.to(roomName).emit("welcome", socket.nickname); //emitting an event "welcome" to the entire room
+        socket.to(roomName).emit("welcome", socket.nickname, countRoom(roomName)); //emitting an event "welcome" to the entire room
         wsServer.sockets.emit("room_change",publicRooms());//sending msg to all sockets
         //socket.emit : 메세지를 하나의 socket에만 보냄
         //io.socket.emit : 연결된 모든 socket에 보냄
     }); 
     socket.on("disconnecting", () => {
-        socket.rooms.forEach(room => socket.to(room).emit("bye", socket.nickname));
+        socket.rooms.forEach((room) => 
+            socket.to(room).emit("bye", socket.nickname, countRoom(room) -1)
+        );
     });
     
     socket.on("disconnect", () => {
