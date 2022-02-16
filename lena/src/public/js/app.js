@@ -5,11 +5,17 @@ const muteBtn = document.getElementById("mute");
 const cameraBtn = document.getElementById("camera");
 const cameraSelect = document.getElementById("cameras");
 
+const call = document.getElementById("call");
+
+call.hidden = true;
+
 //Create Stream:: stream : video + audio
 let myStream;
 let muted = false;
 let camOff = false;
+let roomName;
 
+//-------MEDIA----------
 //유저의 카메라 정보 가져오기
 async function getCameras(){
     try {
@@ -64,7 +70,7 @@ async function getMedia(deviceId){
     }
 };
 
-getMedia();
+
 
 //음소거
 function handleMuteClick(){
@@ -100,3 +106,32 @@ async function handleCameraChange(){
 muteBtn.addEventListener("click", handleMuteClick);
 cameraBtn.addEventListener("click", handleCamClick);
 cameraSelect.addEventListener("click", handleCameraChange);//input을 사용할시 기기가 한개밖에 없으면 제대로 동작하지않음 (강의에서는 input 사용)
+
+
+
+//----------------WELCOME FORM : choose a room----------------------
+//룸에 입장하면 비디오 보이게
+const welcome = document.getElementById("welcome");
+const welcomeForm = welcome.querySelector("form");
+
+function startMedia(){
+    welcome.hidden = true;
+    call.hidden = false;
+    getMedia();
+}
+
+function handleWelcomeSubmit(event){
+    event.preventDefault();
+    const input = welcomeForm.querySelector("input");
+    socket.emit("join_room", input.value, startMedia);
+    roomName = input.value;
+    input.value = "";
+}
+
+welcomeForm.addEventListener("submit", handleWelcomeSubmit);
+
+//-------SOCKET CODE-------------
+//다른사람이 룸을 참가하는경우
+socket.on("welcome", () => {
+    console.log("somebody joined");
+})
