@@ -110,10 +110,21 @@ ___
 # Video
 - stream: Video + Audio
 - it gives ***track*** and we can access each track
-
+___
+### async & await:
+- 자스의 비동기 처리 방법중 가장 최신 방법
+- callback 함수 단점 보완
 #### async function:
-### await
-
-
-
+- function always returns promise
+#### await
+- waits until the promise is ***settled***
+___
+### Web RTC : Web Real-Time Communication
+- API that helps real time communication
+- **peer-to-peer**: communicating directly between users not through server
+- *socketIO는 PTP ❌* 
+    * 웹소켓 서버에 연결되어있고 서버가 메세지를 전달하는 역할을 함
+    즉, 유저끼리 주고받은것 ❌
+- signaling: 끝나면 PTP 커넥션이 생성됨
+- PTP에서 서버: 브라우저의 위치 ip, port, server config 등을 제공해주는 용도로 사용됨
 
