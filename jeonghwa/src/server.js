@@ -19,14 +19,60 @@ app.get("/*", (_, res) => res.redirect("/")); //주소를 변경해도 home으�
 const httpServer = http.createServer(app); //http 서버생성
 const wsServer = SocketIO(httpServer);
 
-wsServer.on("connection", (socket) => {
-    //socket.on("any event") : message이벤트가 아니어도 됨. -> custom event
-    socket.on("enter_room", (msg, done) => {
-        console.log(msg);
-        setTimeout(() => {
-            done("hello form the backend"); //front로 명령을 보냄 -> 보안문제
-        }, 3000);
+function publicRooms(){
+    //const sids = wsServer.socket.adapter.sids;
+    //const rooms = wsServer.socket.adapter.rooms;
+    const{
+        sockets: {
+            adapter: { sids, rooms },
+        },
+    } = wsServer;
+    const publicRooms = [];
+    rooms.forEach( (_, key) => {
+        if(sids.get(key) === undefined) {
+            publicRooms.push(key);
+        }
     });
+    return publicRooms;
+}
+
+function countRoom(roomName){
+    //Optional chaining
+    return wsServer.sockets.adapter.rooms.get(roomName)?.size; 
+    /* ==
+    if(wsServer.sockets.adapter.rooms.get(roomName)){
+        return wsServer.sockets.adapter.rooms.get(roomName).size;
+    } else {
+        return undefined;
+    } */
+}
+
+wsServer.on("connection", (socket) => {
+    socket["nickname"] = "Anno";
+    socket.onAny((event) => {
+        console.log(`Socket Event : ${event}`);
+    });
+    //socket.on("any event") : message이벤트가 아니어도 됨. -> custom event
+    socket.on("enter_room", (roomName, done) => {        
+        socket.join(roomName);
+        done();
+        socket.to(roomName).emit("welcome", socket.nickname, countRoom(roomName)); //chatroom이 만들어지고 다른 브라우저에서 접속하면
+        wsServer.sockets.emit("room_change", publicRooms());
+    });
+    socket.on("disconnecting", () => {
+        socket.rooms.forEach((room) => 
+            socket.to(room).emit("bye", socket.nickname, countRoom(room) -1) //떠나면 줄어야함으로 -1
+        );
+    });
+
+    socket.on("disconnect", () => {
+        wsServer.sockets.emit("room_change", publicRooms());
+    });
+    socket.on("new_message", (msg, room, done) => {
+        socket.to(room).emit("new_message", `${socket.nickname} : ${msg}`);
+        done(); //back-end에서 실행하지 않음.
+    });
+    socket.on("nickname", nickname => (socket["nickname"] = nickname));
 });
 
 /*
