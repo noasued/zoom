@@ -132,5 +132,42 @@ ___
 ***Need server to exchange offers***
 1. offer: ***Peer A*** opens up an connection and "invite"
 2. setLocalDescription(offer)
+3. send the offer to server 
+```javascript
+//Peer A
+socket.on("welcome", async () => {
+    const offer = await myPeerConnection.createOffer(); //create offer
+    myPeerConnection.setLocalDescription(offer); //setLocalDescription
+    socket.emit("offer", offer, roomName); //send offer
+});
+```
 3. Answer : ***Peer B*** answers the offer
+4. setRemoteDescription(offer) : for remote Peers
+5. createAnswer();
+6. setLocalDescription(answer)
+7. send answer to server
+```javascript
+//2. Peer B 가 받는 부분:
+socket.on("offer", async(offer) => { //receive offer
+    myPeerConnection.setRemoteDescription(offer); //set remote description
+    const answer = await myPeerConnection.createAnswer();
+    myPeerConnection.setLocalDescription(answer);
+    socket.emit("answer", answer, roomName);//send answer to server
+});
+```
+8. Peer A receives and create Remote
+```javascript
+//Peer A가 다시 받는 부분
+socket.on("answer", answer => {
+    myPeerConnection.setRemoteDescription(offer);
+})
+```
 
+(A) set Local Description & make an offer and send to (B)
+***- create an offer: set Local Desc*** 
+(B) Receives the description & set Remote Description & make an answer & send answer to (A)
+***- receives offer: set Remote Desc, create Answer, set Local Desc, send Answer to B***
+(A) Receives answer and have remote description
+***- receives Answer: set Remote Desc***
+
+ => both A & B will have LOCAL & REMOTE description
