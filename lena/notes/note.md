@@ -128,3 +128,9 @@ ___
 - signaling: 끝나면 PTP 커넥션이 생성됨
 - PTP에서 서버: 브라우저의 위치 ip, port, server config 등을 제공해주는 용도로 사용됨
 
+### Signaling Process
+***Need server to exchange offers***
+1. offer: ***Peer A*** opens up an connection and "invite"
+2. setLocalDescription(offer)
+3. Answer : ***Peer B*** answers the offer
+
