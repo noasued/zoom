@@ -14,6 +14,7 @@ let myStream;
 let muted = false;
 let camOff = false;
 let roomName;
+let myPeerConnection;
 
 //-------MEDIA----------
 //유저의 카메라 정보 가져오기
@@ -114,10 +115,11 @@ cameraSelect.addEventListener("click", handleCameraChange);//input을 사용할�
 const welcome = document.getElementById("welcome");
 const welcomeForm = welcome.querySelector("form");
 
-function startMedia(){
+async function startMedia(){
     welcome.hidden = true;
     call.hidden = false;
-    getMedia();
+    await getMedia();
+    makeConnection();
 }
 
 function handleWelcomeSubmit(event){
@@ -131,7 +133,25 @@ function handleWelcomeSubmit(event){
 welcomeForm.addEventListener("submit", handleWelcomeSubmit);
 
 //-------SOCKET CODE-------------
-//다른사람이 룸을 참가하는경우
-socket.on("welcome", () => {
-    console.log("somebody joined");
+//peer A 가 받는 부분: 다른사람이 룸을 참가하는경우: offer 만들기
+socket.on("welcome", async () => {
+    const offer = await myPeerConnection.createOffer();
+    myPeerConnection.setLocalDescription(offer);
+    console.log("send the offer")
+    socket.emit("offer", offer, roomName);
+
+});
+
+//Peer B 가 받는 부분:
+socket.on("offer", (offer) => {
+    console.log(offer);
 })
+//--------RTC CODE------
+//PTP Connection 
+function makeConnection(){
+    myPeerConnection = new RTCPeerConnection();
+    myStream
+        .getTracks()
+        .forEach((track) => myPeerConnection.addTrack(track, myStream));
+};
+//Peer A: one who starts connection : creates "offer"
