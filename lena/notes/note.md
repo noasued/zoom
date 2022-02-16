@@ -39,7 +39,7 @@ ___
 * it has the most basic, core feature of websocket
 * install by using "npm i ws"
 ---
-### Socket IO
+# Socket IO
 * It is a framework:
     * helps building real-time connection btw FE and BE
     * uses ***WebSocket*** if the browser supports WebSocket
@@ -105,6 +105,15 @@ function handleMessageSubmit(event){
 #### recap:
 * set: cannot have duplicate value
 * map: CAN have duplicate but UNIQUE key
+___
+___
+# Video
+- stream: Video + Audio
+- it gives ***track*** and we can access each track
+
+#### async function:
+### await
+
 
 
 
