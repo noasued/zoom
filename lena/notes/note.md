@@ -178,9 +178,32 @@ socket.on("answer", answer => {
 Describes protocol needed for webRTC to be able to communicate with remote device
 * 각 피어애서 커넥션 방법이 몇가지 제시되고 모든 피어들이 동의하는 한가지의 커넥션 방법을 선택하면 webRTC가 시작됨
 
+```javascript
+    //addstream은 safari 기반 브라우저(최신 아이폰 등)에선 동작 안할 수 있음
+    myPeerConnection.addEventListener("addstream", handleAddStream);
+
+    function handleAddStream(data){
+        const peerFace = document.getElementById("peerFace");
+        peerFace.srcObject = data.stream;
+};
+    //대신 아래 코드 사용
+    myPeerConnection.addEventListener("track", handleTrack)
+
+    function handleTrack(data) {
+        console.log("handle track")
+        const peerFace = document.querySelector("#peerFace")
+        peerFace.srcObject = data.streams[0]
+};
+```
+
 ___
 ##### localtunnel 
 1. npm i -g localtunnel 설치
 2. npm run dev 실행후 ctrl z 로 잠시 suspend시킴
 3. lt --port 3000 & (& 는 백그라운드에서 실행한다는 의미)
 4. fg %1 로 서버 재실행
+
+##### STUN Server
+- if you request something then the internet tells who you are
+it will tell public IP
+
