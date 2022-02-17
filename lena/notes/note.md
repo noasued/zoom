@@ -209,5 +209,5 @@ it will tell public IP
 ___
 ### Data Channel
 channel that peer-to-peer users can send/receive any kind of data
-img, file, text, chat 등등..
+video와 audio 외에 img, file, text, chat 등등 데이터 타입도 가능
 
