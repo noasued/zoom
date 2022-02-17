@@ -171,3 +171,9 @@ socket.on("answer", answer => {
 ***- receives Answer: set Remote Desc***
 
  => both A & B will have LOCAL & REMOTE description
+
+ * Ice Candidate: after offer & answer both peers will initiate ice candidate event
+  
+* Internet Connectivity Establishment
+Describes protocol needed for webRTC to be able to communicate with remote device
+* 각 피어애서 커넥션 방법이 몇가지 제시되고 모든 피어들이 동의하는 한가지의 커넥션 방법을 선택하면 webRTC가 시작됌
