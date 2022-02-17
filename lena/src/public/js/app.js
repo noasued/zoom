@@ -176,15 +176,35 @@ socket.on("ice", ice => {
 //--------RTC CODE------
 //PTP Connection 
 function makeConnection(){
-    myPeerConnection = new RTCPeerConnection();
+    myPeerConnection = new RTCPeerConnection({
+        iceServers: [
+            {
+                urls: [
+                    "stun:stun.l.google.com:19302",
+                    "stun:stun1.l.google.com:19302",
+                    "stun:stun2.l.google.com:19302",
+                    "stun:stun3.l.google.com:19302",
+                    "stun:stun4.l.google.com:19302",
+                ],
+            },
+        ],
+    });
     myPeerConnection.addEventListener("icecandidate", handleIce); //ice candidate
-    myPeerConnection.addEventListener("addstream", handleAddStream);
+
+    //addstream은 safari 기반 브라우저(최신 아이폰 등)에선 동작 안할 수 있음
+    //myPeerConnection.addEventListener("addstream", handleAddStream);
+    //대신 아래 코드 사용
+    myPeerConnection.addEventListener("track", handleTrack)
     myStream
         .getTracks()
         .forEach((track) => myPeerConnection.addTrack(track, myStream));
 };
 //Peer A: one who starts connection : creates "offer"
-
+function handleTrack(data) {
+    console.log("handle track")
+    const peerFace = document.querySelector("#peerFace")
+    peerFace.srcObject = data.streams[0]
+};
 function handleIce(data){
     console.log("sent candidate");
     socket.emit("ice", data.candidate, roomName);
