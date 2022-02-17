@@ -105,7 +105,7 @@ function handleMessageSubmit(event){
 #### recap:
 * set: cannot have duplicate value
 * map: CAN have duplicate but UNIQUE key
-___
+
 ___
 # Video
 - stream: Video + Audio
@@ -176,7 +176,7 @@ socket.on("answer", answer => {
   
 * Internet Connectivity Establishment
 Describes protocol needed for webRTC to be able to communicate with remote device
-* 각 피어애서 커넥션 방법이 몇가지 제시되고 모든 피어들이 동의하는 한가지의 커넥션 방법을 선택하면 webRTC가 시작됨
+* 각 피어에서 커넥션 방법이 몇가지 제시되고 모든 피어들이 동의하는 한가지의 커넥션 방법을 선택하면 webRTC가 시작됨
 
 ```javascript
     //addstream은 safari 기반 브라우저(최신 아이폰 등)에선 동작 안할 수 있음
@@ -203,7 +203,11 @@ ___
 3. lt --port 3000 & (& 는 백그라운드에서 실행한다는 의미)
 4. fg %1 로 서버 재실행
 
-##### STUN Server
+### STUN Server
 - if you request something then the internet tells who you are
 it will tell public IP
+___
+### Data Channel
+channel that peer-to-peer users can send/receive any kind of data
+video와 audio 외에 img, file, text, chat 등등 데이터 타입도 가능
 
