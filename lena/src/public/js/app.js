@@ -102,6 +102,14 @@ function handleCamClick(){
 //카메라 선택 
 async function handleCameraChange(){
     await getMedia(cameraSelect.value);
+    if(myPeerConnection){
+        const videoTrack = myStream.getVideoTracks()[0];
+        const videoSender = myPeerConnection
+            .getSenders()
+            .find((sender) => sender.track.kind === "video");
+        videoSender.replaceTrack(videoTrack);
+
+    }
 };
 
 muteBtn.addEventListener("click", handleMuteClick);
@@ -138,33 +146,71 @@ welcomeForm.addEventListener("submit", handleWelcomeSubmit);
 socket.on("welcome", async () => {
     const offer = await myPeerConnection.createOffer(); //create offer
     myPeerConnection.setLocalDescription(offer);
-    console.log("send the offer")
+    console.log("sent the offer")
     socket.emit("offer", offer, roomName); //send offer to server
 
 });
 
 //2. Peer B 가 받는 부분:
 socket.on("offer", async(offer) => { //receive offer
+    console.log("received the offer")
     myPeerConnection.setRemoteDescription(offer); //set remote description
     const answer = await myPeerConnection.createAnswer();
     myPeerConnection.setLocalDescription(answer);
     socket.emit("answer", answer, roomName);//send answer to server
+    console.log("sent the answer")
 });
-
 
 //Peer A가 다시 받는 부분
 socket.on("answer", (answer) => {
+    console.log("received the answer")
     myPeerConnection.setRemoteDescription(answer);
 });
 
+socket.on("ice", ice => {
+    console.log("received candidate");
+    myPeerConnection.addIceCandidate(ice);
+});
 
 
 //--------RTC CODE------
 //PTP Connection 
 function makeConnection(){
-    myPeerConnection = new RTCPeerConnection();
+    myPeerConnection = new RTCPeerConnection({
+        iceServers: [
+            {
+                urls: [
+                    "stun:stun.l.google.com:19302",
+                    "stun:stun1.l.google.com:19302",
+                    "stun:stun2.l.google.com:19302",
+                    "stun:stun3.l.google.com:19302",
+                    "stun:stun4.l.google.com:19302",
+                ],
+            },
+        ],
+    });
+    myPeerConnection.addEventListener("icecandidate", handleIce); //ice candidate
+
+    //addstream은 safari 기반 브라우저(최신 아이폰 등)에선 동작 안할 수 있음
+    //myPeerConnection.addEventListener("addstream", handleAddStream);
+    //대신 아래 코드 사용
+    myPeerConnection.addEventListener("track", handleTrack)
     myStream
         .getTracks()
         .forEach((track) => myPeerConnection.addTrack(track, myStream));
 };
 //Peer A: one who starts connection : creates "offer"
+function handleTrack(data) {
+    console.log("handle track")
+    const peerFace = document.querySelector("#peerFace")
+    peerFace.srcObject = data.streams[0]
+};
+function handleIce(data){
+    console.log("sent candidate");
+    socket.emit("ice", data.candidate, roomName);
+};
+
+function handleAddStream(data){
+    const peerFace = document.getElementById("peerFace");
+    peerFace.srcObject = data.stream;
+};
