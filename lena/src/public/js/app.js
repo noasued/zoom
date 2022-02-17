@@ -138,33 +138,51 @@ welcomeForm.addEventListener("submit", handleWelcomeSubmit);
 socket.on("welcome", async () => {
     const offer = await myPeerConnection.createOffer(); //create offer
     myPeerConnection.setLocalDescription(offer);
-    console.log("send the offer")
+    console.log("sent the offer")
     socket.emit("offer", offer, roomName); //send offer to server
 
 });
 
 //2. Peer B 가 받는 부분:
 socket.on("offer", async(offer) => { //receive offer
+    console.log("received the offer")
     myPeerConnection.setRemoteDescription(offer); //set remote description
     const answer = await myPeerConnection.createAnswer();
     myPeerConnection.setLocalDescription(answer);
     socket.emit("answer", answer, roomName);//send answer to server
+    console.log("sent the answer")
 });
-
 
 //Peer A가 다시 받는 부분
 socket.on("answer", (answer) => {
+    console.log("received the answer")
     myPeerConnection.setRemoteDescription(answer);
 });
 
+socket.on("ice", ice => {
+    console.log("received candidate");
+    myPeerConnection.addIceCandidate(ice);
+});
 
 
 //--------RTC CODE------
 //PTP Connection 
 function makeConnection(){
     myPeerConnection = new RTCPeerConnection();
+    myPeerConnection.addEventListener("icecandidate", handleIce); //ice candidate
+    myPeerConnection.addEventListener("addstream", handleAddStream);
     myStream
         .getTracks()
         .forEach((track) => myPeerConnection.addTrack(track, myStream));
 };
 //Peer A: one who starts connection : creates "offer"
+
+function handleIce(data){
+    console.log("sent candidate");
+    socket.emit("ice", data.candidate, roomName);
+};
+
+function handleAddStream(data){
+    const peerFace = document.getElementById("peersStream");
+    peerFace.srcObject = data.stream;
+};
