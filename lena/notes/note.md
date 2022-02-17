@@ -176,4 +176,11 @@ socket.on("answer", answer => {
   
 * Internet Connectivity Establishment
 Describes protocol needed for webRTC to be able to communicate with remote device
-* 각 피어애서 커넥션 방법이 몇가지 제시되고 모든 피어들이 동의하는 한가지의 커넥션 방법을 선택하면 webRTC가 시작됌
+* 각 피어애서 커넥션 방법이 몇가지 제시되고 모든 피어들이 동의하는 한가지의 커넥션 방법을 선택하면 webRTC가 시작됨
+
+___
+##### localtunnel 
+1. npm i -g localtunnel 설치
+2. npm run dev 실행후 ctrl z 로 잠시 suspend시킴
+3. lt --port 3000 & (& 는 백그라운드에서 실행한다는 의미)
+4. fg %1 로 서버 재실행
