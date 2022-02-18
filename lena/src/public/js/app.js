@@ -15,6 +15,7 @@ let muted = false;
 let camOff = false;
 let roomName;
 let myPeerConnection;
+let myDataChannel;
 
 //-------MEDIA----------
 //유저의 카메라 정보 가져오기
@@ -144,6 +145,11 @@ welcomeForm.addEventListener("submit", handleWelcomeSubmit);
 //-------SOCKET CODE-------------
 //1. peer A: 다른사람이 룸을 참가하는경우: offer 만들기
 socket.on("welcome", async () => {
+    //data channel
+    myDataChannel = myPeerConnection.createDataChannel("chat");
+    myDataChannel.addEventListener("message", (event) => console.log(event.data));
+    console.log("made data channel");
+
     const offer = await myPeerConnection.createOffer(); //create offer
     myPeerConnection.setLocalDescription(offer);
     console.log("sent the offer")
@@ -153,6 +159,10 @@ socket.on("welcome", async () => {
 
 //2. Peer B 가 받는 부분:
 socket.on("offer", async(offer) => { //receive offer
+    myPeerConnection.addEventListener("datachannel", (event) => {
+        myDataChannel = event.channel;
+        myDataChannel.addEventListener("message", (event) => console.log(event.data));
+    });
     console.log("received the offer")
     myPeerConnection.setRemoteDescription(offer); //set remote description
     const answer = await myPeerConnection.createAnswer();
@@ -192,9 +202,9 @@ function makeConnection(){
     myPeerConnection.addEventListener("icecandidate", handleIce); //ice candidate
 
     //addstream은 safari 기반 브라우저(최신 아이폰 등)에선 동작 안할 수 있음
-    //myPeerConnection.addEventListener("addstream", handleAddStream);
+    myPeerConnection.addEventListener("addstream", handleAddStream);
     //대신 아래 코드 사용
-    myPeerConnection.addEventListener("track", handleTrack)
+    //myPeerConnection.addEventListener("track", handleTrack)
     myStream
         .getTracks()
         .forEach((track) => myPeerConnection.addTrack(track, myStream));
