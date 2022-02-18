@@ -211,3 +211,35 @@ ___
 channel that peer-to-peer users can send/receive any kind of data
 video와 audio 외에 img, file, text, chat 등등 데이터 타입도 가능
 
+```javascript
+// offer만들기전에 datachannel을 만들어줌 : Offer를 보내는 Peer A
+let myDataChannel;
+
+socket.on("welcome", async () => {
+    myDataChannel = myPeerConnection.createDataChannel("chat");
+    const offer = await myPeerConnection.createOffer(); //create offer
+
+    myPeerConnection.setLocalDescription(offer);
+    console.log("sent the offer")
+    socket.emit("offer", offer, roomName); //send offer to server
+});
+```
+* 다른 peer는 DataChannel을 만들필요없음
+    * DataChannel이 존재 할때  addEventListener해주면 됌
+
+```javascript
+socket.on("offer", async(offer) => { //receive offer
+    //DataChannel이 존재 할때  addEventListener
+      myPeerConnection.addEventListener("datachannel", (event) => {
+        myDataChannel = event.channel; //datachannel이 존재하면 저장
+        myDataChannel.addEventListener("message", console.log);
+    });
+
+    console.log("received the offer")
+    myPeerConnection.setRemoteDescription(offer); //set remote description
+    const answer = await myPeerConnection.createAnswer();
+    myPeerConnection.setLocalDescription(answer);
+    socket.emit("answer", answer, roomName);//send answer to server
+    console.log("sent the answer")
+});
+```
