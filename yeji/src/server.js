@@ -1,86 +1,39 @@
 import http from "http";
+//import WebSocket from "ws";
+import {Server} from "socket.io";
 import express from "express";
-import SocketIO from "socket.io";
 import {instrument} from "@socket.io/admin-ui";
-import express from "express";
+import { type } from "os";
+import { parse } from "path";
+import { setTimeout } from "timers/promises";
+import { count } from "console";
 
 const app = express();
 
 app.set("view engine", "pug");
-app.set("views",__dirname + "/views");
+app.set("views", __dirname + "/views");
 app.use("/public", express.static(__dirname + "/public"));
-app.get("/",(_,res) => res.render("home"));
-app.get("/*", (_,res) => res.redirect("/"));
+app.get("/", (req, res) => res.render("home"));
+app.get("/*", (req, res) => res.redirect("/"));
 
-const handleListen = () => console.log(`Listening on http://localhost:3000`);
+const httpServer = http.createServer(app);
+const wsServer = new Server(httpServer);
 
-const httpServer = http.createServer(app); 
-//const wsServer = SocketIO(httpServer);
-// 새로운 서버 생성
-const wsServer = new Server(httpServer, {
-    cors: {
-        origin : ["https://admin.socket.io"],
-        credentials: true,
-    },
-});
-
-instrument(wsServer, {
-    auth: false
-});
-
-function publicRooms(){
-    const {
-        sockets: {
-            adapter:{sids, rooms},
-        },
-    } = wsServer;
-    const publicRooms = [];
-    rooms.forEach((_, key) => {
-        if(sids.get(key) === undefined){
-            publicRooms.push(key);
-        }
-    });
-    return publicRooms;
-}
-
-// welcome event를 보낼 때 countRoom의 결과값도 같이 보냄
-// 방이 얼마나 큰 지 계산하는 것
-function countRoom(roomName){
-    return wsServer.sockets.adapter.rooms.get(roomName).size;
-}
-
-wsServer.on("connection", (socket) => {
-//    wsServer.socketsJoin("announcement");
-    socket["nickname"] ="yeji";
-    socket.onAny((event) => {
-        console.log(wsServer.sockets.adapter);
-        console.log(`Socket Event:${event}`);
-    });
-    socket.on("enter_room", (roomName, done) => {
+wsServer.on("connection", socket => {
+    socket.on("join_room", (roomName) => {
         socket.join(roomName);
-        done();
-        socket.to(roomName).emit("welcome", socket.nickname, countRoom(roomName));
-        wsServer.sockets.emit("room_change", publicRooms());
+        socket.to(roomName).emit("welcome");
     });
-
-    socket.on("disconnecting",() => {
-        socket.rooms.forEach((room) => 
-            socket.to(room).emit("bye", socket.nickname, countRoom(room)-1)
-        );
+    socket.on("offer", (offer, roomName) => {
+        socket.to(roomName).emit("offer", offer);
     });
-    socket.on("disconnect", () => {
-        wsServer.sockets.emit("room_change", publicRooms());
+    socket.on("answer", (answer, roomName) => {
+        socket.to(roomName).emit("answer", answer);
     });
-
-    socket.on("new_message", (msg, room, done) => {
-        socket.to(room).emit("new_message", `${socket.nickname}: ${msg}`);
-        done();
+    socket.on("ice", (ice, roomName) => {
+        socket.to(roomName).emit("ice", ice);
     });
-    socket.on("nickname", (nickname) => (socket["nickname"] = nickname));
 });
 
-function onSocketClose(){
-    console.log("Disconnected from the Browser ❌");
-}
-
+const handleListen = () => console.log('Listening on http://localhost:3000');
 httpServer.listen(3000, handleListen);
