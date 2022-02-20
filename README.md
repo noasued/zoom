@@ -28,6 +28,6 @@
 <h1 align="center">스터디 방향</h1>
 <ul>
   <li>NomadCoders Vanilla JavaScript 무료강의로 시작(2022.01.21 - 2021.01.28 완강 목표) ✅ [완료]</li>
-  <li>NomadCoders Zum Clone Coding 무료강의 (2022.02.02 - 2022.02.13)</li>
+  <li>NomadCoders Zum Clone Coding 무료강의 (2022.02.02 - 2022.02.20) ✅ [완료]</li>
 </ul>
 
