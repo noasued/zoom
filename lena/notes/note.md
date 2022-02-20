@@ -1,3 +1,64 @@
+### babel
+* JS Compiler : 최신 자스 문법은 (ES6, ES7 등) 브라우저가 이해 하지 못하기 때문에 babel이 브라우저가 이해할 수 있는 문법 (ES5)으로 변환해주는 Node.js 의 패키지
+* ES6 문법 예) 
+   * arrow function
+   * let & const
+
+```
+npm install @babel/preset-env //기본 js코드 검사
+npm i -D @babel/core @babel/node @babel/preset-env
+
+// 바벨 핵심기능, Node.js 명령줄 모드, 기본 js코드 검사 규칙 설치하기
+```
+### npm
+* Node Packaged Manager: 노드 모듈 (패키지)를 관리할 수 있게 해주는 툴
+* 의존성 주입에 이용 (스프링에서 maven dependencies 추가해주는것과 비슷)
+* Json 파일을 만들어 그 안에 기록을 통해서 관리함
+```
+npm init
+```
+위 명령어를  Terminal 창 등에 입력을 하면 프로젝트 관련 정보가 등록된 package.json파일이 생성된다.
+
+```
+{
+  "name": "lena",
+  "version": "1.0.0",
+  "description": "Zoom Clone using node.js, WebRTC and WebSockets",
+  "license": "MIT",
+  "scripts": {
+    "dev": "nodemon"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.16.8",
+    "@babel/core": "^7.16.12",
+    "@babel/node": "^7.16.8",
+    "@babel/preset-env": "^7.16.11",
+    "nodemon": "^2.0.15"
+  },
+  "dependencies": {
+    "@socket.io/admin-ui": "^0.2.0",
+    "express": "^4.17.2",
+    "localtunnel": "^2.0.2",
+    "pug": "^3.0.2",
+    "socket.io": "^4.4.1",
+    "ws": "^8.4.2"
+  }
+}
+ ```
+script는 우리가 run 명령어를 통해서 실행할 것들을 적어두는 것
+dependencies의 경우는 설치할 모듈들을 의미
+
+
+```
+npm I <패키지명>
+```
+
+package.json 을 같이 배포하면 해당 프로그램 개발에 사용되었던 모듈을 그대로 인스톨할 수 있다. 
+```
+npm install
+```
+
+
 ### request & response:
 
 ```javascript
