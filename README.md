@@ -21,7 +21,7 @@
 <h1 align="center">스터디 목표</h1>
 <ul>
   <li>JavaScript 기초 다지기 <a href="https://github.com/Study-Javascript/vanillaJs">(VanillaJs)</a></li>
-  <li>JavaScript, NodeJS, SocketIO, WebRTC 학습 (Zum Clone Coding)</li>
+  <li>JavaScript, NodeJS, SocketIO, WebRTC 학습 <a href="https://github.com/Study-Javascript/zoom">(Zum Clone Coding)</a></li>
   <li>JavaScript 기반의 Node.js , NEXT.js , React, Typescript 와 만나기</li>
   <li>학습한 내용 공유</li>
 </ul>
