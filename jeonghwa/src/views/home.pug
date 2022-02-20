@@ -10,10 +10,17 @@ html(lang="en")
         header 
             h1 Noom 
         main 
-            div#myStream
-                video#myFace(autoplay,playsinline, width="400", height="400") <!--(자동재생, property:모바일브라우저가 필요한) --> 
-                button#mute Mute
-                button#camera Turn Camera Off
-                select#cameras
+            div#welcome
+                form
+                    input(type="text", placegolder="room name", required)
+                    button Enter room
+            div#call
+                div#myStream
+                    video#myFace(autoplay,playsinline, width="400", height="400") <!--(자동재생, property:모바일브라우저가 필요한) --> 
+                    button#mute Mute
+                    button#camera Turn Camera Off
+                    select#cameras
+                video#peerFace(autoplay,playsinline,width="400",height="400")
+                h3 what???
         script(src="/socket.io/socket.io.js") <!-- socketIO 제공 -->
         script(src="/public/js/app.js")
